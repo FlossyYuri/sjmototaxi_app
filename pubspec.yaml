@@ -1,0 +1,65 @@
+name: sjmototaxi_app
+description: Your daily delivery app in mozambique
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.3 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.3.1
+  hexcolor: ^3.0.1
+  carousel_slider: ^4.2.1
+  flutter_svg: ^2.0.7
+  http: ^1.1.0
+  get: ^4.6.5
+  url_launcher: ^6.1.12
+  get_storage: ^2.1.1
+  google_maps_flutter: ^2.3.1
+  geolocator: ^9.0.2
+  sensors_plus: ^3.0.2
+  google_map_polyline_new: ^0.3.0+2
+
+dev_dependencies:
+  flutter_launcher_icons: '^0.13.1'
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/icons/
+    - assets/images/
+    - assets/pngs/
+    - assets/
+  #   - images/a_dot_ham.jpeg
+flutter_launcher_icons:
+  android: 'launcher_icon'
+  ios: true
+  image_path: 'assets/logo.png'
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: 'assets/logo.png'
+    background_color: '#hexcode'
+    theme_color: '#hexcode'
+  windows:
+    generate: true
+    image_path: 'assets/logo.png'
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: 'assets/logo.png'
+# flutter_native_splash:
+#   background_image: 'assets/splash.png'
+#   android: true
+#   ios: true
+#   android_gravity: center
