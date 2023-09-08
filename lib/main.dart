@@ -8,6 +8,7 @@ import 'package:sjmototaxi_app/screens/Client/checkout/delivery_screen.dart';
 import 'package:sjmototaxi_app/screens/Client/checkout/rate_screen.dart';
 import 'package:sjmototaxi_app/screens/Client/checkout/rates_screen.dart';
 import 'package:sjmototaxi_app/screens/Client/vendor_screen.dart';
+import 'package:sjmototaxi_app/screens/Common/chat_screen.dart';
 import 'package:sjmototaxi_app/screens/OnBoarding/onboarding_screen.dart';
 import 'package:sjmototaxi_app/screens/Vendor/register.dart';
 import 'package:sjmototaxi_app/screens/home_page.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const OnboardingScreen(),
           '/auth/login': (context) => const LoginScreen(),
           '/home': (context) => const MainScreen(),
+          '/chat': (context) => const ChatScreen(),
           '/cart': (context) => const CartScreen(),
           '/vendor': (context) => const VendorScreen(),
           '/delivery': (context) => const DeliveryScreen(),

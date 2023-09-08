@@ -1,1 +1,1 @@
-enum VeicleTypes { CAR, MOTO, TXOPELA }
+enum VeicleTypes { car, bike, txopela }

@@ -40,6 +40,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     double maxSize = getMaxSnapSize();
+    double minSize = getMinSnapSize();
+    double initialSize = getInitialSnapSize();
 
     ever(mapsStoreController.requestStep, (_) {
       setState(() {
@@ -47,39 +49,43 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       });
     });
 
-    return Scaffold(
-      backgroundColor: HexColor("#F2F2F2"),
-      body: Container(
-        color: Theme.of(context).primaryColor,
-        child: Stack(
-          children: [
-            GoogleMapRender(
-              step: step,
-            ),
-            DraggableScrollableSheet(
-              initialChildSize: step != 1 || step != 3 ? 0.3333 : 0,
-              minChildSize: step != 1 || step != 3 ? 0.3333 : 0,
-              maxChildSize: maxSize,
-              snap: step != 1,
-              snapSizes: [0.3333, maxSize],
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                switch (step) {
-                  case 0:
-                    return RouteSelection(scrollController: scrollController);
-                  case 1:
-                    return Container();
-                  case 2:
-                    return VeicleSelectionScroll(
-                        scrollController: scrollController);
-                  case 3:
-                    return RequestRide(scrollController: scrollController);
-                  default:
-                    return WatchRide(scrollController: scrollController);
-                }
-              },
-            )
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        mapsStoreController.previousStep();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: HexColor("#F2F2F2"),
+        body: Container(
+          color: Theme.of(context).primaryColor,
+          child: Stack(
+            children: [
+              GoogleMapRender(),
+              DraggableScrollableSheet(
+                initialChildSize: initialSize,
+                minChildSize: minSize,
+                maxChildSize: maxSize,
+                snap: step != 1,
+                snapSizes: Set.of([minSize, initialSize, maxSize]).toList(),
+                builder:
+                    (BuildContext context, ScrollController scrollController) {
+                  switch (step) {
+                    case 0:
+                      return RouteSelection(scrollController: scrollController);
+                    case 1:
+                      return Container();
+                    case 2:
+                      return VeicleSelectionScroll(
+                          scrollController: scrollController);
+                    case 3:
+                      return RequestRide(scrollController: scrollController);
+                    default:
+                      return WatchRide(scrollController: scrollController);
+                  }
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -87,7 +93,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   double getMaxSnapSize() {
     if (step == 0) return 0.9;
+    if (step == 2) return 0.5;
+    return 1;
+  }
+
+  double getMinSnapSize() {
+    if (step == 0) return 0.3333;
+    if (step == 1) return 0;
     if (step == 2) return 0.4;
+    if (step == 3) return 0.3333;
+    if (step == 4) return 0.4;
+    return 0;
+  }
+
+  double getInitialSnapSize() {
+    if (step == 0) return 0.3333;
+    if (step == 1) return 0;
+    if (step == 2) return 0.4;
+    if (step == 3) return 0.3333;
+    if (step == 4) return 0.4;
     return 0.3334;
   }
 }

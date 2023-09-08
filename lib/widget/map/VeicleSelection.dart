@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:sjmototaxi_app/constants.dart';
+import 'package:sjmototaxi_app/enums/RideTypes.dart';
 import 'package:sjmototaxi_app/store/maps_store_controller.dart';
 
 class VeicleSelectionScroll extends StatelessWidget {
   final ScrollController scrollController;
-  const VeicleSelectionScroll({super.key, required this.scrollController});
+  VeicleSelectionScroll({super.key, required this.scrollController});
+  final MapsStoreController mapsStoreController =
+      Get.find<MapsStoreController>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,50 +23,38 @@ class VeicleSelectionScroll extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(vertical: 12),
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24,
-              ),
-              child: Center(
-                child: Container(
-                  width: 60,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                    borderRadius: BorderRadius.circular(5),
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 60,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade500,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              height: 12,
-              color: Colors.grey.shade200,
-            ),
-            const SizedBox(height: 16),
-            VeicleSelection(
-              veicle: 'Carro',
-              icon: 'assets/icons/car-black-side-silhouette.svg',
-              distance: 'Proximo de mim',
-              price: '250MT',
-            ),
-            VeicleSelection(
-              veicle: 'Motorizada',
-              icon: 'assets/icons/single-motorbike.svg',
-              distance: '2 min',
-              selected: 'Motorizada',
-              price: '250MT',
-            ),
-            VeicleSelection(
-              veicle: 'Txopela',
-              icon: 'assets/icons/txopela.svg',
-              distance: '3 min',
-              price: '250MT',
-            ),
-          ],
+              ...veicleModels
+                  .map((veicle) => VeicleSelection(
+                        veicle: veicle.type,
+                        name: veicle.name,
+                        speed: veicle.speed,
+                        icon: veicle.icon,
+                        selected: mapsStoreController.rideOptions.value.type ==
+                            veicle.type,
+                        pricePerKm: veicle.pricePerKM,
+                      ))
+                  .toList()
+            ],
+          ),
         ),
       ),
     );
@@ -71,106 +63,104 @@ class VeicleSelectionScroll extends StatelessWidget {
 
 class VeicleSelection extends StatelessWidget {
   final String icon;
-  final String veicle;
-  final String distance;
-  final String price;
-  final String? selected;
+  final VeicleTypes veicle;
+  final double speed;
+  final double pricePerKm;
+  final String name;
+  final bool selected;
   VeicleSelection({
     super.key,
     required this.icon,
     required this.veicle,
-    required this.distance,
-    required this.price,
-    this.selected,
+    required this.name,
+    required this.speed,
+    required this.pricePerKm,
+    this.selected = false,
   });
 
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        mapsStoreController.nextStep();
-        // print(mapsStoreController.requestStep);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
-        ),
-        color: selected != null && selected == veicle
-            ? Theme.of(context).primaryColor
-            : Colors.white,
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              child: SvgPicture.asset(
-                icon,
-                colorFilter: ColorFilter.mode(
-                  selected != null && selected == veicle
-                      ? Colors.white
-                      : Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      veicle,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: selected != null && selected == veicle
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                    Text(
-                      distance,
-                      style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: selected != null && selected == veicle
-                            ? Colors.white
-                            : Colors.grey.shade400,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  price,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: selected != null && selected == veicle
-                        ? Colors.white
-                        : Colors.black,
+    return Obx(() {
+      int distance = mapsStoreController.rideOptions.value.distance ?? 0;
+      int duration = mapsStoreController.rideOptions.value.duration ?? 0;
+      return InkWell(
+        onTap: () {
+          mapsStoreController.setVeicle(
+              veicle, ((pricePerKm * distance) / 1000).ceil());
+          mapsStoreController.nextStep();
+          // print(mapsStoreController.requestStep);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
+          color: selected ? Theme.of(context).primaryColor : Colors.white,
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                child: SvgPicture.asset(
+                  icon,
+                  colorFilter: ColorFilter.mode(
+                    selected ? Colors.white : Colors.black,
+                    BlendMode.srcIn,
                   ),
                 ),
-                // Text(
-                //   "X",
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.normal,
-                //     color: Colors.grey.shade400,
-                //     fontSize: 18,
-                //   ),
-                // ),
-              ],
-            ),
-          ],
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: selected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      Text(
+                        '${mapsStoreController.rideOptions.value.formatedDistance}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: selected ? Colors.white : Colors.grey.shade400,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${((pricePerKm * distance) / 1000).ceil()} MT',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: selected ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '${((duration * speed) / 60).ceil()} mins',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: selected ? Colors.white : Colors.grey.shade400,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

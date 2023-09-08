@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sjmototaxi_app/enums/RideTypes.dart';
 import 'package:sjmototaxi_app/model/RideOptions.dart';
 import 'package:sjmototaxi_app/model/place.dart';
 
@@ -14,7 +15,15 @@ class MapsStoreController extends GetxController {
     null,
     null,
     null,
+    null,
+    null,
   ).obs;
+
+  void setVeicle(VeicleTypes veicle, int price) {
+    rideOptions.value.type = veicle;
+    rideOptions.value.price = price;
+    rideOptions.refresh();
+  }
 
   void setPlaces(List<GoogleMapsPlace> places) {
     googlePopularPlaces.value = places;
@@ -22,10 +31,10 @@ class MapsStoreController extends GetxController {
   }
 
   void nextStep() {
-    requestStep.value++;
+    if (requestStep.value < 5) requestStep.value++;
   }
 
   void previousStep() {
-    requestStep.value--;
+    if (requestStep.value > 0) requestStep.value--;
   }
 }

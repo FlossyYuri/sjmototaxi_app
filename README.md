@@ -20,4 +20,5 @@ flutter pub run flutter_native_splash:create
 # For launch icon
 flutter pub run flutter_launcher_icons:main
 
+# For build apk
 flutter build apk --split-per-abi

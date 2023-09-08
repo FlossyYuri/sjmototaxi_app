@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sjmototaxi_app/enums/RideTypes.dart';
+import 'package:sjmototaxi_app/model/VeicleModel.dart';
 
 const kPrimaryColor = Color.fromARGB(255, 244, 95, 55);
 const kPrimaryLightColor = Color.fromARGB(255, 255, 255, 255);
@@ -7,4 +9,28 @@ const List<String> places = [
   'Teka Famba',
   'Baixa da Cidade'
 ];
-const GOOGLE_API_KEY = 'AIzaSyCDz-vTndv8wQPfKwxA_brFvc1swha6cGU';
+const GOOGLE_API_KEY = 'AIzaSyB758DbueNvVzVrDktfLIGWGF7FNFMh2BU';
+
+List<VeicleModel> veicleModels = [
+  VeicleModel(
+    VeicleTypes.bike,
+    'assets/icons/single-motorbike.svg',
+    30,
+    0.7,
+    'Motorizada',
+  ),
+  VeicleModel(
+    VeicleTypes.txopela,
+    'assets/icons/txopela.svg',
+    40,
+    0.8,
+    'Txopela',
+  ),
+  VeicleModel(
+    VeicleTypes.car,
+    'assets/icons/car-black-side-silhouette.svg',
+    50,
+    1,
+    'Carro',
+  ),
+];

@@ -6,4 +6,8 @@ class GoogleMapsPlace {
   final LatLng geometry;
 
   GoogleMapsPlace(this.name, this.place_id, this.geometry);
+
+  String toString() {
+    return '$name,$place_id,${geometry.toString()}';
+  }
 }
