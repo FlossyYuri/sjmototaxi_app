@@ -28,7 +28,6 @@ class RequestRide extends StatelessWidget {
       child: SingleChildScrollView(
         child: Obx(
           () {
-            print(mapsStoreController.rideOptions.value.type);
             var veicle = veicleModels.firstWhere((element) =>
                 element.type == mapsStoreController.rideOptions.value.type);
             return Column(

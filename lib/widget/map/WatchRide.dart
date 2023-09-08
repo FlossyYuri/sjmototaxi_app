@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:sjmototaxi_app/constants.dart';
 import 'package:sjmototaxi_app/screens/Common/chat_screen.dart';
 import 'package:sjmototaxi_app/store/maps_store_controller.dart';
 import 'package:sjmototaxi_app/utils/index.dart';
@@ -136,94 +137,102 @@ class WatchRide extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             Obx(
-              () => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/car-black-side-silhouette.svg',
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            Text(
-                              'DISTÂNCIA',
-                              style: TextStyle(
-                                color: Colors.grey.shade300,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
+              () {
+                var veicle = veicleModels.firstWhere((element) =>
+                    element.type == mapsStoreController.rideOptions.value.type);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            veicle.icon,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              mapsStoreController
-                                      .rideOptions.value.formatedDistance ??
-                                  '...',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              Text(
+                                'DISTÂNCIA',
+                                style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 32),
-                        Column(
-                          children: [
-                            Text(
-                              'TEMPO',
-                              style: TextStyle(
-                                color: Colors.grey.shade300,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                              const SizedBox(height: 8),
+                              Text(
+                                mapsStoreController
+                                        .rideOptions.value.formatedDistance ??
+                                    '...',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              mapsStoreController
-                                      .rideOptions.value.formatedDuration ??
-                                  '...',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            ],
+                          ),
+                          const SizedBox(width: 32),
+                          Column(
+                            children: [
+                              Text(
+                                'TEMPO',
+                                style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 32),
-                        Column(
-                          children: [
-                            Text(
-                              'PREÇO',
-                              style: TextStyle(
-                                color: Colors.grey.shade300,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                              const SizedBox(height: 8),
+                              Text(
+                                mapsStoreController
+                                        .rideOptions.value.formatedDuration ??
+                                    '...',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${mapsStoreController.rideOptions.value.price ?? "..."} MT',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            ],
+                          ),
+                          const SizedBox(width: 32),
+                          Column(
+                            children: [
+                              Text(
+                                'PREÇO',
+                                style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    AppButton(
-                      onClick: () {
-                        CustomUtils().showCustomDialog(context);
-                      },
-                      label: "Confirmar",
-                    ),
-                  ],
-                ),
-              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${mapsStoreController.rideOptions.value.price ?? "..."} MT',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      AppButton(
+                        onClick: () {
+                          CustomUtils().showCustomDialog(context);
+                        },
+                        label: "Confirmar",
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 24),
           ],
