@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sjmototaxi_app/enums/ButtonTypes.dart';
 
 class AppButton extends StatelessWidget {
   final Function() onClick;
   final String label;
+  final ButtonTypes type;
   final bool isLoading;
   final Color? backgroundColor;
   const AppButton({
     super.key,
     required this.onClick,
+    this.type = ButtonTypes.filled,
     this.isLoading = false,
     required this.label,
     this.backgroundColor,
@@ -21,14 +24,19 @@ class AppButton extends StatelessWidget {
           child: InkWell(
             onTap: onClick,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
                 color: backgroundColor == null
-                    ? Theme.of(context).primaryColor
+                    ? type == ButtonTypes.filled
+                        ? Theme.of(context).primaryColor
+                        : Colors.white
                     : backgroundColor,
                 borderRadius: BorderRadius.circular(
                   8,
                 ),
+                border: type == ButtonTypes.filled
+                    ? null
+                    : Border.all(color: Colors.grey.shade600),
               ),
               child: isLoading
                   ? const Center(
@@ -44,9 +52,11 @@ class AppButton extends StatelessWidget {
                   : Text(
                       label,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         letterSpacing: 0.5,
-                        color: Colors.white,
+                        color: type == ButtonTypes.filled
+                            ? Colors.white
+                            : Colors.black,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

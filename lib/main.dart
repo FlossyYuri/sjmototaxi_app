@@ -11,8 +11,8 @@ import 'package:sjmototaxi_app/screens/Client/vendor_screen.dart';
 import 'package:sjmototaxi_app/screens/Common/chat_screen.dart';
 import 'package:sjmototaxi_app/screens/OnBoarding/onboarding_screen.dart';
 import 'package:sjmototaxi_app/screens/Vendor/register.dart';
+import 'package:sjmototaxi_app/screens/driver_screen.dart';
 import 'package:sjmototaxi_app/screens/home_page.dart';
-import 'package:sjmototaxi_app/screens/main_screen.dart';
 import 'package:sjmototaxi_app/store/auth_store_controller.dart';
 
 void main() async {
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const OnboardingScreen(),
           '/auth/login': (context) => const LoginScreen(),
-          '/home': (context) => const MainScreen(),
+          '/home': (context) => const DriverScreen(),
           '/chat': (context) => const ChatScreen(),
           '/cart': (context) => const CartScreen(),
           '/vendor': (context) => const VendorScreen(),

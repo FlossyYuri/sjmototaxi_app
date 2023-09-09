@@ -1,0 +1,1 @@
+enum ButtonTypes { filled, outlined }

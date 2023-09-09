@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sjmototaxi_app/store/maps_store_controller.dart';
 import 'package:sjmototaxi_app/widget/map/GoogleMapRender.dart';
 import 'package:sjmototaxi_app/widget/map/RequestRide.dart';
@@ -9,14 +8,15 @@ import 'package:sjmototaxi_app/widget/map/RouteSelection.dart';
 import 'package:sjmototaxi_app/widget/map/VeicleSelection.dart';
 import 'package:sjmototaxi_app/widget/map/WatchRide.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class ClientRideScreen extends StatefulWidget {
+  const ClientRideScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<ClientRideScreen> createState() => _ClientRideScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+class _ClientRideScreenState extends State<ClientRideScreen>
+    with TickerProviderStateMixin {
   int activeTabIndex = 0;
   final MapsStoreController mapsStoreController =
       Get.put(MapsStoreController());
@@ -34,6 +34,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     // setGyroscopeListener();
+
     super.initState();
   }
 

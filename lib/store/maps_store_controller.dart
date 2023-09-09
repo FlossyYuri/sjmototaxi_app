@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sjmototaxi_app/enums/RideTypes.dart';
 import 'package:sjmototaxi_app/model/RideOptions.dart';
 import 'package:sjmototaxi_app/model/place.dart';
@@ -17,6 +18,18 @@ class MapsStoreController extends GetxController {
     null,
     null,
     null,
+  ).obs;
+  var newRide = RideOptions(
+    GoogleMapsPlace('Jimmy Mahotas', null, LatLng(-25.8879, 32.6037)),
+    GoogleMapsPlace('Alameda do Aeroporto', null, LatLng(-25.9262, 32.5758)),
+    VeicleTypes.car,
+    null,
+    2200,
+    null,
+    300,
+    '2 km',
+    '5 min',
+    250,
   ).obs;
 
   void setVeicle(VeicleTypes veicle, int price) {
