@@ -1,4 +1,4 @@
-import 'package:sjmototaxi_app/enums/RideTypes.dart';
+import 'package:agotaxi/enums/RideTypes.dart';
 
 class Driver {
   String name;

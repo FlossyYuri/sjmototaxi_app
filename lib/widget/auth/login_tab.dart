@@ -1,5 +1,5 @@
-import 'package:sjmototaxi_app/widget/common/app_button.dart';
-import 'package:sjmototaxi_app/widget/forms/login_form.dart';
+import 'package:agotaxi/widget/common/app_button.dart';
+import 'package:agotaxi/widget/forms/login_form.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';

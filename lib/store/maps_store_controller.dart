@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sjmototaxi_app/enums/RideTypes.dart';
-import 'package:sjmototaxi_app/model/RideOptions.dart';
-import 'package:sjmototaxi_app/model/place.dart';
+import 'package:agotaxi/enums/RideTypes.dart';
+import 'package:agotaxi/model/RideOptions.dart';
+import 'package:agotaxi/model/place.dart';
 
 class MapsStoreController extends GetxController {
   RxList<GoogleMapsPlace> googlePopularPlaces = <GoogleMapsPlace>[].obs;

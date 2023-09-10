@@ -1,6 +1,6 @@
-import 'package:sjmototaxi_app/widget/checkout/RatesPercentage.dart';
-import 'package:sjmototaxi_app/widget/checkout/SingleRate.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/checkout/RatesPercentage.dart';
+import 'package:agotaxi/widget/checkout/SingleRate.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hexcolor/hexcolor.dart';

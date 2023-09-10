@@ -1,4 +1,4 @@
-package com.flossyyuri.sj_mototaxi
+package com.flossyyuri.agotaxi
 
 import io.flutter.embedding.android.FlutterActivity
 

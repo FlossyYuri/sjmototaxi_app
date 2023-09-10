@@ -1,5 +1,5 @@
-import 'package:sjmototaxi_app/widget/common/history_card.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/common/history_card.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 
 class HistoryScreen extends StatelessWidget {

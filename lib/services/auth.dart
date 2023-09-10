@@ -2,7 +2,7 @@ import 'dart:convert' as convert;
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:sjmototaxi_app/utils/temple.dart';
+import 'package:agotaxi/utils/temple.dart';
 
 Future<Map<String, dynamic>> postRequest(
     String endpoint, Map<String, dynamic> body) async {

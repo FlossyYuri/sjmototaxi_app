@@ -1,5 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sjmototaxi_app/constants.dart';
+import 'package:agotaxi/constants.dart';
 
 class TemplesUtils {
   // Base url for google maps nearbysearch

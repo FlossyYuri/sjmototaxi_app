@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/enums/ButtonTypes.dart';
+import 'package:agotaxi/enums/ButtonTypes.dart';
 
 class AppButton extends StatelessWidget {
   final Function() onClick;

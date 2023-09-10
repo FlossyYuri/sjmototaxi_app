@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/widget/AdvancedLine.dart';
-import 'package:sjmototaxi_app/widget/PlaceChips.dart';
-import 'package:sjmototaxi_app/widget/PopularLocations.dart';
-import 'package:sjmototaxi_app/widget/line.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/widget/AdvancedLine.dart';
+import 'package:agotaxi/widget/PlaceChips.dart';
+import 'package:agotaxi/widget/PopularLocations.dart';
+import 'package:agotaxi/widget/line.dart';
 
 class RouteSelection extends StatelessWidget {
   final ScrollController scrollController;

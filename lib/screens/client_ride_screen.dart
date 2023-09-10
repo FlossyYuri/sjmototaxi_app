@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/widget/map/GoogleMapRender.dart';
-import 'package:sjmototaxi_app/widget/map/RequestRide.dart';
-import 'package:sjmototaxi_app/widget/map/RouteSelection.dart';
-import 'package:sjmototaxi_app/widget/map/VeicleSelection.dart';
-import 'package:sjmototaxi_app/widget/map/WatchRide.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/widget/map/GoogleMapRender.dart';
+import 'package:agotaxi/widget/map/RequestRide.dart';
+import 'package:agotaxi/widget/map/RouteSelection.dart';
+import 'package:agotaxi/widget/map/VeicleSelection.dart';
+import 'package:agotaxi/widget/map/WatchRide.dart';
 
 class ClientRideScreen extends StatefulWidget {
   const ClientRideScreen({super.key});

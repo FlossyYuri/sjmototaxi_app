@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/model/place.dart';
+import 'package:agotaxi/model/place.dart';
 
 class PlaceChips extends StatelessWidget {
   List<GoogleMapsPlace> places;

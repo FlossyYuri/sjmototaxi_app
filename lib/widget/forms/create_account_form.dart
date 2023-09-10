@@ -1,8 +1,8 @@
-import 'package:sjmototaxi_app/services/auth.dart';
-import 'package:sjmototaxi_app/store/auth_store_controller.dart';
-import 'package:sjmototaxi_app/utils/form_validation_api.dart';
-import 'package:sjmototaxi_app/widget/common/app_button.dart';
-import 'package:sjmototaxi_app/widget/common/form/CustomTextInput.dart';
+import 'package:agotaxi/services/auth.dart';
+import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:agotaxi/utils/form_validation_api.dart';
+import 'package:agotaxi/widget/common/app_button.dart';
+import 'package:agotaxi/widget/common/form/CustomTextInput.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

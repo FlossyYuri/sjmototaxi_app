@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:sjmototaxi_app/constants.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
+import 'package:agotaxi/constants.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
 
 class PopularLocations extends StatelessWidget {
   PopularLocations({

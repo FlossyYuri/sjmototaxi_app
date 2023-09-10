@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/widget/line.dart';
+import 'package:agotaxi/widget/line.dart';
 
 class LinePainter extends CustomPainter {
   final Line line;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sjmototaxi_app/model/place.dart';
-import 'package:sjmototaxi_app/services/maps.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
+import 'package:agotaxi/model/place.dart';
+import 'package:agotaxi/services/maps.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
 
 class MapSearchField extends StatefulWidget {
   final Function callback;

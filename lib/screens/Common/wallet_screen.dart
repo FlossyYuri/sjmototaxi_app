@@ -1,6 +1,6 @@
-import 'package:sjmototaxi_app/widget/checkout/PaymentMethods.dart';
-import 'package:sjmototaxi_app/widget/common/add_button.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/checkout/PaymentMethods.dart';
+import 'package:agotaxi/widget/common/add_button.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

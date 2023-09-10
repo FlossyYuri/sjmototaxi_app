@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/widget/line.dart';
-import 'package:sjmototaxi_app/widget/line_painter.dart';
+import 'package:agotaxi/widget/line.dart';
+import 'package:agotaxi/widget/line_painter.dart';
 
 class AdvancedLine extends StatelessWidget {
   final Axis direction;

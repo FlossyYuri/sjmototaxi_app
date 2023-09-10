@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:sjmototaxi_app/constants.dart';
-import 'package:sjmototaxi_app/enums/ButtonTypes.dart';
-import 'package:sjmototaxi_app/screens/Common/chat_screen.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/utils/index.dart';
-import 'package:sjmototaxi_app/widget/AdvancedLine.dart';
-import 'package:sjmototaxi_app/widget/common/app_button.dart';
-import 'package:sjmototaxi_app/widget/line.dart';
+import 'package:agotaxi/constants.dart';
+import 'package:agotaxi/enums/ButtonTypes.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/widget/AdvancedLine.dart';
+import 'package:agotaxi/widget/common/app_button.dart';
+import 'package:agotaxi/widget/line.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WatchRideDriver extends StatelessWidget {
@@ -303,7 +301,7 @@ class WatchRideDriver extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
         ],
       ),
     );

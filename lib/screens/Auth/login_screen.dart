@@ -1,5 +1,5 @@
-import 'package:sjmototaxi_app/widget/auth/create_account_tab.dart';
-import 'package:sjmototaxi_app/widget/auth/login_tab.dart';
+import 'package:agotaxi/widget/auth/create_account_tab.dart';
+import 'package:agotaxi/widget/auth/login_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

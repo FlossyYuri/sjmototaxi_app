@@ -1,5 +1,5 @@
-import 'package:sjmototaxi_app/widget/checkout/PaymentMethods.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/checkout/PaymentMethods.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 

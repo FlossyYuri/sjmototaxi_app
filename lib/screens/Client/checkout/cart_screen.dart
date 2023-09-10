@@ -1,5 +1,5 @@
-import 'package:sjmototaxi_app/screens/Client/checkout/delivery_screen.dart';
-import 'package:sjmototaxi_app/widget/vendor/CatalogueItem.dart';
+import 'package:agotaxi/screens/Client/checkout/delivery_screen.dart';
+import 'package:agotaxi/widget/vendor/CatalogueItem.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 

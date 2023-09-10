@@ -3,9 +3,9 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sjmototaxi_app/constants.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/utils/location.dart';
+import 'package:agotaxi/constants.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/utils/location.dart';
 
 class DriverGoogleMap extends StatefulWidget {
   DriverGoogleMap({super.key});
@@ -159,6 +159,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
       );
       mapsStoreController.rideOptions.refresh();
       polylineCoordinates.clear();
+      print(result.distance);
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });

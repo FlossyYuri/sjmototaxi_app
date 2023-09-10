@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:sjmototaxi_app/constants.dart';
+import 'package:agotaxi/constants.dart';
 import 'dart:convert';
 
 String latLngToString(LatLng coordinates) {

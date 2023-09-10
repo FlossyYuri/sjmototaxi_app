@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/widget/text_field.dart';
-import 'package:sjmototaxi_app/constants.dart';
+import 'package:agotaxi/widget/text_field.dart';
+import 'package:agotaxi/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class RoundedSearchField extends StatelessWidget {

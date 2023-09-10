@@ -1,6 +1,6 @@
-import 'package:sjmototaxi_app/widget/common/chat_bubble.dart';
-import 'package:sjmototaxi_app/widget/common/received_bubble.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/common/chat_bubble.dart';
+import 'package:agotaxi/widget/common/received_bubble.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {

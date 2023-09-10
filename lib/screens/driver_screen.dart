@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/widget/map/DriverGoogleMap.dart';
-import 'package:sjmototaxi_app/widget/map/GoogleMapRender.dart';
-import 'package:sjmototaxi_app/widget/map/RequestRide.dart';
-import 'package:sjmototaxi_app/widget/map/RouteSelection.dart';
-import 'package:sjmototaxi_app/widget/map/VeicleSelection.dart';
-import 'package:sjmototaxi_app/widget/map/WatchRide.dart';
-import 'package:sjmototaxi_app/widget/map/WatchRideDriver.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/widget/map/DriverGoogleMap.dart';
+import 'package:agotaxi/widget/map/WatchRideDriver.dart';
 
 class DriverScreen extends StatefulWidget {
   const DriverScreen({super.key});
@@ -41,10 +36,6 @@ class _DriverScreenState extends State<DriverScreen>
 
   @override
   Widget build(BuildContext context) {
-    double maxSize = getMaxSnapSize();
-    double minSize = getMinSnapSize();
-    double initialSize = getInitialSnapSize();
-
     ever(mapsStoreController.requestStep, (_) {
       setState(() {
         step = mapsStoreController.requestStep.value;
@@ -80,29 +71,5 @@ class _DriverScreenState extends State<DriverScreen>
         ),
       ),
     );
-  }
-
-  double getMaxSnapSize() {
-    if (step == 0) return 0.9;
-    if (step == 2) return 0.5;
-    return 1;
-  }
-
-  double getMinSnapSize() {
-    if (step == 0) return 0.3333;
-    if (step == 1) return 0;
-    if (step == 2) return 0.4;
-    if (step == 3) return 0.3333;
-    if (step == 4) return 0.4;
-    return 0;
-  }
-
-  double getInitialSnapSize() {
-    if (step == 0) return 0.3333;
-    if (step == 1) return 0;
-    if (step == 2) return 0.4;
-    if (step == 3) return 0.3333;
-    if (step == 4) return 0.4;
-    return 0.3334;
   }
 }

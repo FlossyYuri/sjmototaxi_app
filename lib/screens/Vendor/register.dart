@@ -1,6 +1,6 @@
-import 'package:sjmototaxi_app/widget/common/add_button.dart';
-import 'package:sjmototaxi_app/widget/common/form/CustomTextInput.dart';
-import 'package:sjmototaxi_app/widget/layout/SimpleAppBar.dart';
+import 'package:agotaxi/widget/common/add_button.dart';
+import 'package:agotaxi/widget/common/form/CustomTextInput.dart';
+import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 
 class RegisterVendor extends StatelessWidget {

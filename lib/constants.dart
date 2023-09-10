@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sjmototaxi_app/enums/RideTypes.dart';
-import 'package:sjmototaxi_app/model/VeicleModel.dart';
+import 'package:agotaxi/enums/RideTypes.dart';
+import 'package:agotaxi/model/VeicleModel.dart';
 
 const kPrimaryColor = Color.fromARGB(255, 244, 95, 55);
 const kPrimaryLightColor = Color.fromARGB(255, 255, 255, 255);

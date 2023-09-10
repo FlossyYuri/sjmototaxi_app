@@ -1,8 +1,8 @@
-import 'package:sjmototaxi_app/screens/Common/chat_screen.dart';
-import 'package:sjmototaxi_app/screens/Common/history_screen.dart';
-import 'package:sjmototaxi_app/screens/Common/wallet_screen.dart';
-import 'package:sjmototaxi_app/screens/vendor/product.dart';
-import 'package:sjmototaxi_app/screens/vendor/register.dart';
+import 'package:agotaxi/screens/Common/chat_screen.dart';
+import 'package:agotaxi/screens/Common/history_screen.dart';
+import 'package:agotaxi/screens/Common/wallet_screen.dart';
+import 'package:agotaxi/screens/vendor/product.dart';
+import 'package:agotaxi/screens/vendor/register.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatelessWidget {

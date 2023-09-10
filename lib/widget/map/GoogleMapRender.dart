@@ -6,14 +6,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:sjmototaxi_app/constants.dart';
-import 'package:sjmototaxi_app/model/Debouncer.dart';
-import 'package:sjmototaxi_app/model/place.dart';
-import 'package:sjmototaxi_app/services/auth.dart';
-import 'package:sjmototaxi_app/services/maps.dart';
-import 'package:sjmototaxi_app/store/maps_store_controller.dart';
-import 'package:sjmototaxi_app/utils/location.dart';
-import 'package:sjmototaxi_app/widget/map/MapSearchField.dart';
+import 'package:agotaxi/constants.dart';
+import 'package:agotaxi/model/Debouncer.dart';
+import 'package:agotaxi/model/place.dart';
+import 'package:agotaxi/services/auth.dart';
+import 'package:agotaxi/services/maps.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/utils/location.dart';
+import 'package:agotaxi/widget/map/MapSearchField.dart';
 
 class GoogleMapRender extends StatefulWidget {
   GoogleMapRender({super.key});

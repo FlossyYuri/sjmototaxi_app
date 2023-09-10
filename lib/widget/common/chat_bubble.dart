@@ -1,4 +1,4 @@
-import 'package:sjmototaxi_app/widget/common/chat_triangle.dart';
+import 'package:agotaxi/widget/common/chat_triangle.dart';
 import 'package:flutter/material.dart';
 
 class SentMessage extends StatelessWidget {
