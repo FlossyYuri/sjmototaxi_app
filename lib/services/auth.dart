@@ -6,7 +6,7 @@ import 'package:agotaxi/utils/temple.dart';
 
 Future<Map<String, dynamic>> postRequest(
     String endpoint, Map<String, dynamic> body) async {
-  var url = Uri.https('ergo.flossyyuri.com', '/api/v1/$endpoint');
+  var url = Uri.http('ergo.flossyyuri.com', '/api/v1/$endpoint');
 
   var response = await http.post(url, body: body);
   var jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;

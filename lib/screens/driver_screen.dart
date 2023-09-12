@@ -60,12 +60,12 @@ class _DriverScreenState extends State<DriverScreen>
                 top: 0,
                 child: DriverGoogleMap(),
               ),
-              Positioned(
-                bottom: 24,
-                right: 24,
-                left: 24,
-                child: WatchRideDriver(),
-              ),
+              // Positioned(
+              //   bottom: 24,
+              //   right: 24,
+              //   left: 24,
+              //   child: WatchRideDriver(),
+              // ),
             ],
           ),
         ),

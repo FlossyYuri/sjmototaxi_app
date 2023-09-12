@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -39,5 +40,15 @@ class CustomLocationUtils {
 
   LatLng getLatLngFromPosition(Position position) {
     return LatLng(position.latitude, position.longitude);
+  }
+
+  bool isSouthwest(LatLng point1, LatLng point2) {
+    return (point1.latitude < point2.latitude) &&
+        (point1.longitude < point2.longitude);
+  }
+
+  Future<BitmapDescriptor> getMarkerIconFromPng(String asset) async {
+    return await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, asset);
   }
 }

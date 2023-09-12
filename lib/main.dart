@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:agotaxi/firebase_options.dart';
 import 'package:agotaxi/screens/Auth/login_screen.dart';
 import 'package:agotaxi/screens/Client/checkout/cart_screen.dart';
 import 'package:agotaxi/screens/Client/checkout/delivery_screen.dart';
@@ -11,12 +8,20 @@ import 'package:agotaxi/screens/Client/vendor_screen.dart';
 import 'package:agotaxi/screens/Common/chat_screen.dart';
 import 'package:agotaxi/screens/OnBoarding/onboarding_screen.dart';
 import 'package:agotaxi/screens/Vendor/register.dart';
-import 'package:agotaxi/screens/driver_screen.dart';
+import 'package:agotaxi/screens/client_ride_screen.dart';
 import 'package:agotaxi/screens/home_page.dart';
 import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:hexcolor/hexcolor.dart';
 
-void main() async {
+Future<void> main() async {
   await GetStorage.init();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
@@ -53,7 +58,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const OnboardingScreen(),
           '/auth/login': (context) => const LoginScreen(),
-          '/home': (context) => const DriverScreen(),
+          '/home': (context) => const ClientRideScreen(),
           '/chat': (context) => const ChatScreen(),
           '/cart': (context) => const CartScreen(),
           '/vendor': (context) => const VendorScreen(),

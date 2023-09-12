@@ -1,4 +1,3 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:agotaxi/enums/RideTypes.dart';
 import 'package:agotaxi/model/Driver.dart';
 import 'package:agotaxi/model/place.dart';

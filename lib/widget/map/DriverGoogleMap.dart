@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:agotaxi/constants.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/utils/location.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class DriverGoogleMap extends StatefulWidget {
   DriverGoogleMap({super.key});
@@ -19,21 +20,13 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
       Get.put(MapsStoreController());
 
   GoogleMapController? _controller;
+  final List<Marker> _markers = [];
+
   Future<void> onMapCreated(GoogleMapController controller) async {
     _controller = controller;
     String value = await DefaultAssetBundle.of(context)
         .loadString('assets/map_style.json');
     _controller!.setMapStyle(value);
-  }
-
-  BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
-
-  void setCurrentMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/current_position.png")
-        .then((icon) {
-      currentLocationIcon = icon;
-    });
   }
 
   LatLng currentPosition = const LatLng(-25.8858, 32.6129);
@@ -56,8 +49,8 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         currentPositionRotation = position.heading;
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
         if (_controller == null) return;
-        CustomLocationUtils()
-            .updateCameraPosition(_controller!, currentPosition);
+        // CustomLocationUtils()
+        //     .updateCameraPosition(_controller!, currentPosition);
       });
     });
   }
@@ -67,18 +60,19 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
       setState(() {
         currentPosition = CustomLocationUtils().getLatLngFromPosition(value);
         if (_controller == null) return;
-        CustomLocationUtils()
-            .updateCameraPosition(_controller!, currentPosition);
+        // CustomLocationUtils()
+        //     .updateCameraPosition(_controller!, currentPosition);
       });
     });
   }
 
   @override
   void initState() {
-    setCurrentMarkerIcon();
+    _loadMarkerIcons();
     _setCurrentPosition();
     _getPolyline();
     _liveLocation();
+
     super.initState();
   }
 
@@ -87,6 +81,35 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
   _setLoadingMenu(bool _status) {
     setState(() {
       _loading = _status;
+    });
+  }
+
+  Map<String, BitmapDescriptor> markerIcon = {};
+  _loadMarkerIcons() async {
+    markerIcon['current'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/current_position.png');
+    markerIcon['origin'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/origin.png');
+    markerIcon['destinYellow'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/destin1.png');
+    markerIcon['destinRed'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/destin2.png');
+    markerIcon['car'] =
+        await CustomLocationUtils().getMarkerIconFromPng('assets/pngs/car.png');
+    _setMapMarkers();
+  }
+
+  _setMapMarkers() async {
+    setState(() {
+      _markers.add(Marker(
+        markerId: MarkerId("currentLocation"),
+        icon: markerIcon['current']!,
+        position: LatLng(
+          currentPosition.latitude,
+          currentPosition.longitude,
+        ),
+        rotation: currentPositionRotation,
+      ));
     });
   }
 
@@ -112,17 +135,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
                       ),
                       onMapCreated: onMapCreated,
                       polylines: Set<Polyline>.of(polylines.values),
-                      markers: {
-                        Marker(
-                          markerId: MarkerId("currentLocation"),
-                          icon: currentLocationIcon,
-                          position: LatLng(
-                            currentPosition.latitude,
-                            currentPosition.longitude,
-                          ),
-                          rotation: currentPositionRotation,
-                        ),
-                      },
+                      markers: Set<Marker>.of(_markers),
                     ),
                   ],
                 ),
@@ -135,7 +148,8 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
     PolylineId id = PolylineId("poly");
     Polyline polyline = Polyline(
         polylineId: id,
-        color: Theme.of(context).primaryColor,
+        color: HexColor('#9722FB'),
+        // color: HexColor('#3A5DFB'),
         width: 4,
         points: polylineCoordinates);
     polylines[id] = polyline;
@@ -159,9 +173,48 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
       );
       mapsStoreController.rideOptions.refresh();
       polylineCoordinates.clear();
-      print(result.distance);
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+
+      if (CustomLocationUtils().isSouthwest(origin, destin)) {
+        _controller!.animateCamera(
+          CameraUpdate.newLatLngBounds(
+              LatLngBounds(
+                southwest: origin,
+                northeast: destin,
+              ),
+              64.0),
+        );
+      } else {
+        _controller!.animateCamera(
+          CameraUpdate.newLatLngBounds(
+              LatLngBounds(
+                southwest: destin,
+                northeast: origin,
+              ),
+              64.0),
+        );
+      }
+
+      setState(() {
+        _markers.add(Marker(
+          markerId: MarkerId("origin"),
+          icon: markerIcon['origin']!,
+          position: LatLng(
+            origin.latitude,
+            origin.longitude,
+          ),
+          anchor: Offset(0.5, 1.0),
+        ));
+        _markers.add(Marker(
+          markerId: MarkerId("destinRed"),
+          icon: markerIcon['destinRed']!,
+          position: LatLng(
+            destin.latitude,
+            destin.longitude,
+          ),
+        ));
       });
     }
     _addPolyLine();

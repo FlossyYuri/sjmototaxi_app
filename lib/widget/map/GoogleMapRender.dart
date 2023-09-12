@@ -1,11 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:agotaxi/constants.dart';
 import 'package:agotaxi/model/Debouncer.dart';
 import 'package:agotaxi/model/place.dart';
@@ -14,6 +6,12 @@ import 'package:agotaxi/services/maps.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/utils/location.dart';
 import 'package:agotaxi/widget/map/MapSearchField.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapRender extends StatefulWidget {
   GoogleMapRender({super.key});
@@ -26,6 +24,31 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   final MapsStoreController mapsStoreController =
       Get.put(MapsStoreController());
 
+  void driversCarPositionStream() async {
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('online_drivers')
+        .snapshots()) {
+      _markers.clear();
+      for (var driver in snapshot.docs) {
+        Map<String, dynamic> data = driver.data();
+        print(data['position']['latitude']);
+        var marker = Marker(
+            markerId: MarkerId(data['name']),
+            icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
+            position: LatLng(
+              double.parse(data['position']['latitude']),
+              double.parse(data['position']['longitude']),
+            ),
+            rotation: data['rotation'],
+            anchor: Offset(0.5, 0.5));
+
+        setState(() {
+          _markers.add(marker);
+        });
+      }
+    }
+  }
+
   GoogleMapController? _controller;
   Future<void> onMapCreated(GoogleMapController controller) async {
     _controller = controller;
@@ -34,24 +57,20 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
     _controller!.setMapStyle(value);
   }
 
-  BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
-
-  void setCurrentMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/current_position.png")
-        .then((icon) {
-      currentLocationIcon = icon;
-    });
-  }
-
-  BitmapDescriptor selectedLocationIcon = BitmapDescriptor.defaultMarker;
-
-  void setSelectedMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/pngs/ic_pin.png")
-        .then((icon) {
-      selectedLocationIcon = icon;
-    });
+  final List<Marker> _markers = [];
+  Map<String, BitmapDescriptor> markerIcon = {};
+  _loadMarkerIcons() async {
+    markerIcon['current'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/current_position.png');
+    markerIcon['origin'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/origin.png');
+    markerIcon['destinYellow'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/destin1.png');
+    markerIcon['selected'] = await CustomLocationUtils()
+        .getMarkerIconFromPng('assets/pngs/ic_pin.png');
+    markerIcon['car'] =
+        await CustomLocationUtils().getMarkerIconFromPng('assets/pngs/car.png');
+    driversCarPositionStream();
   }
 
   LatLng currentPosition = const LatLng(-25.8858, 32.6129);
@@ -112,8 +131,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
 
   @override
   void initState() {
-    setCurrentMarkerIcon();
-    setSelectedMarkerIcon();
+    _loadMarkerIcons();
     _setCurrentPosition();
     _liveLocation();
     setPlaces();
@@ -186,7 +204,8 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                             markers: {
                               Marker(
                                 markerId: MarkerId("currentLocation"),
-                                icon: currentLocationIcon,
+                                icon: markerIcon['current'] ??
+                                    BitmapDescriptor.defaultMarker,
                                 position: LatLng(
                                   currentPosition.latitude,
                                   currentPosition.longitude,
@@ -196,12 +215,14 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                               if (destin != null)
                                 Marker(
                                   markerId: MarkerId("selectedLocation"),
-                                  icon: selectedLocationIcon,
+                                  icon: markerIcon['selected'] ??
+                                      BitmapDescriptor.defaultMarker,
                                   position: LatLng(
                                     destin!.latitude,
                                     destin!.longitude,
                                   ),
                                 ),
+                              ..._markers
                             },
                           ),
                           if (mapsStoreController.requestStep.value == 1)
