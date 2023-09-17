@@ -1,3 +1,5 @@
+import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -19,8 +21,9 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     with TickerProviderStateMixin {
   int activeTabIndex = 0;
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
-  int step = 0;
+      Get.find<MapsStoreController>();
+  final AuthStoreController authStoreController =
+      Get.find<AuthStoreController>();
   // void setGyroscopeListener() {
   //   gyroscopeEvents.listen(
   //     (GyroscopeEvent event) {
@@ -30,6 +33,15 @@ class _ClientRideScreenState extends State<ClientRideScreen>
   //     cancelOnError: true,
   //   );
   // }
+  void driversCarPositionStream() async {
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('rides')
+        .doc(mapsStoreController.rideOptions.value.id)
+        .snapshots()) {
+      print(snapshot.data()?['status']);
+      print(snapshot.data()?['driver']);
+    }
+  }
 
   @override
   void initState() {
@@ -40,16 +52,6 @@ class _ClientRideScreenState extends State<ClientRideScreen>
 
   @override
   Widget build(BuildContext context) {
-    double maxSize = getMaxSnapSize();
-    double minSize = getMinSnapSize();
-    double initialSize = getInitialSnapSize();
-
-    ever(mapsStoreController.requestStep, (_) {
-      setState(() {
-        step = mapsStoreController.requestStep.value;
-      });
-    });
-
     return WillPopScope(
       onWillPop: () async {
         mapsStoreController.previousStep();
@@ -62,29 +64,55 @@ class _ClientRideScreenState extends State<ClientRideScreen>
           child: Stack(
             children: [
               GoogleMapRender(),
-              DraggableScrollableSheet(
-                initialChildSize: initialSize,
-                minChildSize: minSize,
-                maxChildSize: maxSize,
-                snap: step != 1,
-                snapSizes: Set.of([minSize, initialSize, maxSize]).toList(),
-                builder:
-                    (BuildContext context, ScrollController scrollController) {
-                  switch (step) {
-                    case 0:
-                      return RouteSelection(scrollController: scrollController);
-                    case 1:
-                      return Container();
-                    case 2:
-                      return VeicleSelectionScroll(
-                          scrollController: scrollController);
-                    case 3:
-                      return RequestRide(scrollController: scrollController);
-                    default:
-                      return WatchRide(scrollController: scrollController);
-                  }
+              Obx(
+                () {
+                  double maxSize =
+                      getMaxSnapSize(mapsStoreController.requestStep.value);
+                  double minSize =
+                      getMinSnapSize(mapsStoreController.requestStep.value);
+                  double initialSize =
+                      getInitialSnapSize(mapsStoreController.requestStep.value);
+                  return DraggableScrollableSheet(
+                    initialChildSize: initialSize,
+                    minChildSize: minSize,
+                    maxChildSize: maxSize,
+                    snap: mapsStoreController.requestStep.value != 1,
+                    snapSizes: Set.of([minSize, initialSize, maxSize]).toList(),
+                    builder: (BuildContext context,
+                        ScrollController scrollController) {
+                      switch (mapsStoreController.requestStep.value) {
+                        case 0:
+                          return RouteSelection(
+                              scrollController: scrollController);
+                        case 1:
+                          return Container();
+                        case 2:
+                          return VeicleSelectionScroll(
+                              scrollController: scrollController);
+                        case 3:
+                          return RequestRide(
+                              scrollController: scrollController);
+                        default:
+                          return WatchRide(scrollController: scrollController);
+                      }
+                    },
+                  );
                 },
-              )
+              ),
+              Positioned(
+                top: 100,
+                right: 20,
+                child: TextButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll<Color>(Colors.red)),
+                  onPressed: authStoreController.logout,
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -92,13 +120,13 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     );
   }
 
-  double getMaxSnapSize() {
+  double getMaxSnapSize(int step) {
     if (step == 0) return 0.9;
     if (step == 2) return 0.5;
     return 1;
   }
 
-  double getMinSnapSize() {
+  double getMinSnapSize(int step) {
     if (step == 0) return 0.3333;
     if (step == 1) return 0;
     if (step == 2) return 0.4;
@@ -107,7 +135,7 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     return 0;
   }
 
-  double getInitialSnapSize() {
+  double getInitialSnapSize(int step) {
     if (step == 0) return 0.3333;
     if (step == 1) return 0;
     if (step == 2) return 0.4;

@@ -1,3 +1,4 @@
+import 'package:agotaxi/enums/RideTypes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -107,4 +108,15 @@ class CustomUtils {
           );
         });
   }
+}
+
+VeicleTypes stringToEnum(String input) {
+  return VeicleTypes.values.firstWhere(
+    (e) => e.toString().split('.').last == input,
+    orElse: () => VeicleTypes.car,
+  );
+}
+
+List<String> listDynamicToListString(List<dynamic> list) {
+  return list.map((e) => e as String).toList();
 }

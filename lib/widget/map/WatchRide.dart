@@ -1,11 +1,8 @@
+import 'package:agotaxi/constants.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:agotaxi/constants.dart';
-import 'package:agotaxi/screens/Common/chat_screen.dart';
-import 'package:agotaxi/store/maps_store_controller.dart';
-import 'package:agotaxi/utils/index.dart';
-import 'package:agotaxi/widget/common/app_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WatchRide extends StatelessWidget {
@@ -13,6 +10,37 @@ class WatchRide extends StatelessWidget {
   WatchRide({super.key, required this.scrollController});
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
+
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit'),
+                onTap: () {
+                  // Handle Edit action
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete'),
+                onTap: () {
+                  // Handle Delete action
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +100,9 @@ class WatchRide extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Jamal Canana",
+                              mapsStoreController
+                                      .rideOptions.value.driver?.name ??
+                                  "Driver",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 18,
@@ -87,7 +117,7 @@ class WatchRide extends StatelessWidget {
                                 ),
                                 SizedBox(width: 8),
                                 Text(
-                                  "4.9",
+                                  "...",
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     color: Colors.grey.shade400,
@@ -118,7 +148,11 @@ class WatchRide extends StatelessWidget {
                         heroTag: 'callButton',
                         backgroundColor: Theme.of(context).primaryColor,
                         onPressed: () {
-                          launchUrl(Uri.parse("tel://840521586"));
+                          if (mapsStoreController.rideOptions.value.driver !=
+                              null) {
+                            launchUrl(Uri.parse(
+                                "tel://${mapsStoreController.rideOptions.value.driver?.phone}"));
+                          }
                         },
                         elevation: 0,
                         highlightElevation: 2,
@@ -223,21 +257,79 @@ class WatchRide extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      AppButton(
-                        onClick: () {
-                          CustomUtils().showCustomDialog(context);
-                        },
-                        label: "Confirmar",
-                      ),
                     ],
                   ),
                 );
               },
+            ),
+            Divider(
+              color: Colors.grey.shade200,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (mapsStoreController.rideOptions.value.status ==
+                            'opened')
+                          SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                              strokeWidth: 2,
+                              semanticsLabel: 'Searching',
+                            ),
+                          ),
+                        const SizedBox(width: 16),
+                        Obx(
+                          () => Text(
+                            getStatus(
+                                mapsStoreController.rideOptions.value.status),
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () => _showOptions(context),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
           ],
         ),
       ),
     );
+  }
+
+  String getStatus(String status) {
+    switch (status) {
+      case 'opened':
+        return 'Buscando ...';
+      case 'ready':
+        return 'Pronto';
+      case 'running':
+        return 'Em progresso';
+      case 'canceled':
+        return 'Cancelado';
+      case 'closed':
+        return 'Finalizado';
+      default:
+        return 'Pendente';
+    }
   }
 }

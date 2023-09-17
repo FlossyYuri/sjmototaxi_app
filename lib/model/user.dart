@@ -1,9 +1,30 @@
-class User {
-  String fullName;
-  String role;
-  int id;
-  String email;
-  String phone;
+class UserModel {
+  String name = '';
+  String role = '';
+  String uid = '';
+  String email = '';
+  String phone = '';
+  String? photo = '';
 
-  User(this.fullName, this.role, this.id, this.email, this.phone);
+  UserModel(this.name, this.role, this.uid, this.email, this.phone, this.photo);
+
+  UserModel.fromMap(Map<String, dynamic> user) {
+    name = user['name'];
+    role = user['role'];
+    uid = user['uid'];
+    email = user['email'];
+    phone = user['phone'];
+    photo = user['photo'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'role': role,
+      'uid': uid,
+      'email': email,
+      'phone': phone,
+      'photo': photo,
+    };
+  }
 }

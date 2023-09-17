@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,8 @@ class RequestRide extends StatelessWidget {
 
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +111,14 @@ class RequestRide extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: AppButton(
-                      onClick: () {
+                      onClick: () async {
+                        var x = mapsStoreController.rideOptions.value.toMap();
+                        var ride = await _firestore.collection('rides').add(x);
+                        ride.update({
+                          'id': ride.id,
+                          'createdAt': FieldValue.serverTimestamp()
+                        });
+                        mapsStoreController.saveCurrentRide(ride.id);
                         mapsStoreController.nextStep();
                       },
                       label: "Solicitar"),

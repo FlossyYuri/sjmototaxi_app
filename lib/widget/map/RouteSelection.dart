@@ -11,7 +11,7 @@ class RouteSelection extends StatelessWidget {
   final ScrollController scrollController;
   RouteSelection({super.key, required this.scrollController});
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
+      Get.find<MapsStoreController>();
 
   @override
   Widget build(BuildContext context) {

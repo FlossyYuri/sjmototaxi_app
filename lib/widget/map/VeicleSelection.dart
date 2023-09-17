@@ -1,3 +1,4 @@
+import 'package:agotaxi/store/auth_store_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -80,6 +81,8 @@ class VeicleSelection extends StatelessWidget {
 
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
+  final AuthStoreController authStoreController =
+      Get.find<AuthStoreController>();
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -88,7 +91,9 @@ class VeicleSelection extends StatelessWidget {
       return InkWell(
         onTap: () {
           mapsStoreController.setVeicle(
-              veicle, ((pricePerKm * distance) / 1000).ceil());
+              veicle,
+              ((pricePerKm * distance) / 1000).ceil(),
+              authStoreController.auth.value['user']);
           mapsStoreController.nextStep();
           // print(mapsStoreController.requestStep);
         },

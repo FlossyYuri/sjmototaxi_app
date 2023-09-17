@@ -10,7 +10,7 @@ class PopularLocations extends StatelessWidget {
   });
 
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
+      Get.find<MapsStoreController>();
   @override
   Widget build(BuildContext context) {
     return Padding(

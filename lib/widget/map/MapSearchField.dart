@@ -15,7 +15,7 @@ class MapSearchField extends StatefulWidget {
 
 class _MapSearchFieldState extends State<MapSearchField> {
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
+      Get.find<MapsStoreController>();
   TextEditingController _textController = TextEditingController();
   List<GoogleMapsPlace> places = [];
   String query = '';

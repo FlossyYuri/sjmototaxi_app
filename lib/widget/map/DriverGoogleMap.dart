@@ -1,3 +1,5 @@
+import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,7 +19,9 @@ class DriverGoogleMap extends StatefulWidget {
 
 class _DriverGoogleMapState extends State<DriverGoogleMap> {
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
+      Get.find<MapsStoreController>();
+  final AuthStoreController authStoreController =
+      Get.find<AuthStoreController>();
 
   GoogleMapController? _controller;
   final List<Marker> _markers = [];
@@ -37,6 +41,20 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
 
   double currentPositionRotation = 0;
 
+  void createDocumentWithPosition() {
+    FirebaseFirestore.instance
+        .collection('online_drivers')
+        .doc(authStoreController.auth['user']['uid'])
+        .set({
+      'name': authStoreController.auth['user']['name'],
+      'position': {
+        'latitude': currentPosition.latitude.toString(),
+        'longitude': currentPosition.longitude.toString(),
+      },
+      'rotation': currentPositionRotation.toString(),
+    });
+  }
+
   void _liveLocation() {
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high,
@@ -49,6 +67,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         currentPositionRotation = position.heading;
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
         if (_controller == null) return;
+        createDocumentWithPosition();
         // CustomLocationUtils()
         //     .updateCameraPosition(_controller!, currentPosition);
       });
@@ -70,7 +89,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
   void initState() {
     _loadMarkerIcons();
     _setCurrentPosition();
-    _getPolyline();
+    // _getPolyline();
     _liveLocation();
 
     super.initState();
@@ -96,21 +115,6 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         .getMarkerIconFromPng('assets/pngs/destin2.png');
     markerIcon['car'] =
         await CustomLocationUtils().getMarkerIconFromPng('assets/pngs/car.png');
-    _setMapMarkers();
-  }
-
-  _setMapMarkers() async {
-    setState(() {
-      _markers.add(Marker(
-        markerId: MarkerId("currentLocation"),
-        icon: markerIcon['current']!,
-        position: LatLng(
-          currentPosition.latitude,
-          currentPosition.longitude,
-        ),
-        rotation: currentPositionRotation,
-      ));
-    });
   }
 
   @override
@@ -135,7 +139,19 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
                       ),
                       onMapCreated: onMapCreated,
                       polylines: Set<Polyline>.of(polylines.values),
-                      markers: Set<Marker>.of(_markers),
+                      markers: {
+                        Marker(
+                          markerId: MarkerId("currentLocation"),
+                          icon: markerIcon['current'] ??
+                              BitmapDescriptor.defaultMarker,
+                          position: LatLng(
+                            currentPosition.latitude,
+                            currentPosition.longitude,
+                          ),
+                          rotation: currentPositionRotation,
+                        ),
+                        // ...Set<Marker>.of(_markers)
+                      },
                     ),
                   ],
                 ),
@@ -157,8 +173,8 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
   }
 
   _getPolyline() async {
-    var origin = mapsStoreController.newRide.value.origin!.geometry;
-    var destin = mapsStoreController.newRide.value.destiny!.geometry;
+    var origin = mapsStoreController.rideOptions.value.origin!.geometry;
+    var destin = mapsStoreController.rideOptions.value.destin!.geometry;
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         GOOGLE_API_KEY,
         PointLatLng(origin.latitude, origin.longitude),

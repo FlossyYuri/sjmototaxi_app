@@ -22,7 +22,7 @@ class GoogleMapRender extends StatefulWidget {
 
 class _GoogleMapRenderState extends State<GoogleMapRender> {
   final MapsStoreController mapsStoreController =
-      Get.put(MapsStoreController());
+      Get.find<MapsStoreController>();
 
   void driversCarPositionStream() async {
     await for (var snapshot in FirebaseFirestore.instance
@@ -39,7 +39,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
               double.parse(data['position']['latitude']),
               double.parse(data['position']['longitude']),
             ),
-            rotation: data['rotation'],
+            rotation: double.parse(data['rotation'].toString()),
             anchor: Offset(0.5, 0.5));
 
         setState(() {
@@ -146,7 +146,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         setState(() {
           placeName = name;
         });
-        mapsStoreController.rideOptions.value.destiny =
+        mapsStoreController.rideOptions.value.destin =
             GoogleMapsPlace(name, null, destin!);
         mapsStoreController.rideOptions.refresh();
       });
@@ -313,7 +313,10 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                         InkWell(
                           onTap: () async {
                             if (origin != null && destin != null) {
-                              mapsStoreController.rideOptions.value.destiny =
+                              mapsStoreController.rideOptions.value.origin =
+                                  GoogleMapsPlace(
+                                      "Minha localização", null, origin!);
+                              mapsStoreController.rideOptions.value.destin =
                                   GoogleMapsPlace(placeName, null, destin!);
                               mapsStoreController.rideOptions.refresh();
                               mapsStoreController.nextStep();
