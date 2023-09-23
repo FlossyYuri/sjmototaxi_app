@@ -1,8 +1,11 @@
 import 'package:agotaxi/constants.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
+import 'package:agotaxi/widget/AdvancedLine.dart';
+import 'package:agotaxi/widget/line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WatchRide extends StatelessWidget {
@@ -87,12 +90,16 @@ class WatchRide extends StatelessWidget {
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundImage: Image.asset(
-                          'assets/images/kfc.jpg',
-                          fit: BoxFit.cover,
-                        ).image,
+                      Obx(
+                        () => CircleAvatar(
+                          radius: 24,
+                          backgroundImage: Image.asset(
+                            mapsStoreController
+                                    .rideOptions.value.client?.photo ??
+                                'assets/pngs/userVector.png',
+                            fit: BoxFit.cover,
+                          ).image,
+                        ),
                       ),
                       SizedBox(width: 16),
                       Expanded(
@@ -169,7 +176,71 @@ class WatchRide extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      SvgPicture.asset('assets/icons/ic_current.svg'),
+                      Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        child: AdvancedLine(
+                          direction: Axis.vertical,
+                          line: DashedLine(dashSize: 2, gapSize: 6),
+                          paintDef: Paint()
+                            ..strokeWidth = 3.0
+                            ..strokeCap = StrokeCap.round,
+                        ),
+                      ),
+                      SvgPicture.asset(
+                        'assets/icons/ic_pin.svg',
+                        colorFilter: ColorFilter.mode(
+                          HexColor('#F02659'),
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 16),
+                  Obx(
+                    () => Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            mapsStoreController.rideOptions.value.origin!.name,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Divider(
+                            color: Colors.grey.shade300,
+                            height: 20,
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            mapsStoreController.rideOptions.value.destin!.name,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             Obx(
               () {
                 var veicle = veicleModels.firstWhere((element) =>
@@ -322,6 +393,8 @@ class WatchRide extends StatelessWidget {
         return 'Buscando ...';
       case 'ready':
         return 'Pronto';
+      case 'accepted':
+        return 'Aguarde pelo motorista';
       case 'running':
         return 'Em progresso';
       case 'canceled':

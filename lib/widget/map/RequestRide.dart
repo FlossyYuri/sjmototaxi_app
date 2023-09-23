@@ -10,7 +10,11 @@ import 'package:agotaxi/widget/common/app_button.dart';
 
 class RequestRide extends StatelessWidget {
   final ScrollController scrollController;
-  RequestRide({super.key, required this.scrollController});
+  final Function subcribeToRide;
+  RequestRide(
+      {super.key,
+      required this.scrollController,
+      required this.subcribeToRide});
 
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
@@ -109,20 +113,27 @@ class RequestRide extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: AppButton(
-                      onClick: () async {
-                        var x = mapsStoreController.rideOptions.value.toMap();
-                        var ride = await _firestore.collection('rides').add(x);
-                        ride.update({
-                          'id': ride.id,
-                          'createdAt': FieldValue.serverTimestamp()
-                        });
-                        mapsStoreController.saveCurrentRide(ride.id);
-                        mapsStoreController.nextStep();
-                      },
-                      label: "Solicitar"),
-                ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppButton(
+                            onClick: () async {
+                              var x =
+                                  mapsStoreController.rideOptions.value.toMap();
+                              var ride =
+                                  await _firestore.collection('rides').add(x);
+                              ride.update({
+                                'id': ride.id,
+                                'createdAt': FieldValue.serverTimestamp(),
+                              });
+                              mapsStoreController.saveCurrentRide(ride.id);
+                              subcribeToRide();
+                              mapsStoreController.nextStep();
+                            },
+                            label: "Solicitar"),
+                      ],
+                    )),
                 const SizedBox(height: 32),
               ],
             );

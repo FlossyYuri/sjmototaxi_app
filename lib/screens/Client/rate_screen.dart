@@ -1,6 +1,9 @@
+import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class RateScreen extends StatefulWidget {
   const RateScreen({super.key});
@@ -10,6 +13,13 @@ class RateScreen extends StatefulWidget {
 }
 
 class _RateScreenState extends State<RateScreen> {
+  final MapsStoreController mapsStoreController =
+      Get.find<MapsStoreController>();
+  final AuthStoreController authStoreController =
+      Get.find<AuthStoreController>();
+  int selectedRating = 0;
+  final TextEditingController _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +28,7 @@ class _RateScreenState extends State<RateScreen> {
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
           appBar: const SimpleAppBar(
-            title: 'Avaliar Entregador',
+            title: 'Avaliar Motorista',
             isDark: false,
           ),
           body: Padding(
@@ -42,15 +52,21 @@ class _RateScreenState extends State<RateScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 68),
-                          Text(
-                            "KFC",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleSmall,
+                          Obx(
+                            () => Text(
+                              mapsStoreController
+                                      .rideOptions.value.driver?.name ??
+                                  'Motorista',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            "Av. Guerra",
-                            textAlign: TextAlign.center,
+                          Obx(
+                            () => Text(
+                              '${mapsStoreController.rideOptions.value.driver?.brand ?? "-"} - ${mapsStoreController.rideOptions.value.driver?.plate ?? "-"}',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -67,21 +83,34 @@ class _RateScreenState extends State<RateScreen> {
                           const SizedBox(height: 24),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [1, 2, 3, 4, 5]
-                                .map((e) =>
-                                    SvgPicture.asset('assets/icons/star2.svg'))
-                                .toList(),
+                            children: [1, 2, 3, 4, 5].map((e) {
+                              int index = e - 1;
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedRating = e;
+                                  });
+                                },
+                                child: SvgPicture.asset(
+                                  index < selectedRating
+                                      ? 'assets/icons/star2.svg'
+                                      : 'assets/icons/star1.svg',
+                                ),
+                              );
+                            }).toList(),
                           ),
                           const SizedBox(height: 48),
                           TextField(
                             maxLines: 4, // Allows multiple lines
                             keyboardType: TextInputType.multiline,
                             style: TextStyle(color: Colors.grey.shade400),
+                            controller: _textController,
                             decoration: InputDecoration(
                               hintText: 'Comentário',
                               hintStyle: Theme.of(context).textTheme.bodySmall,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8)),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -90,7 +119,34 @@ class _RateScreenState extends State<RateScreen> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/rates');
+                                    if (selectedRating == 0) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text('Avaliação é obrigatória.'),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    switch (authStoreController.userRole()) {
+                                      case 'DRIVER':
+                                        mapsStoreController.rateUser(
+                                            _textController.text,
+                                            selectedRating,
+                                            mapsStoreController
+                                                .rideOptions.value.client!);
+                                        break;
+                                      default:
+                                        mapsStoreController.rateUser(
+                                            _textController.text,
+                                            selectedRating,
+                                            mapsStoreController
+                                                .rideOptions.value.driver!);
+                                    }
+
+                                    mapsStoreController.cleanRide();
+                                    Navigator.pushNamed(context, '/home');
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -118,17 +174,20 @@ class _RateScreenState extends State<RateScreen> {
                       ),
                     ),
                     Positioned(
-                      top: -50,
-                      left: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: Image.asset(
-                          'assets/images/kfc.jpg',
-                          fit: BoxFit.cover,
-                        ).image,
-                      ),
-                    ),
+                        top: -50,
+                        left: 0,
+                        right: 0,
+                        child: Obx(
+                          () => CircleAvatar(
+                            radius: 50,
+                            backgroundImage: Image.asset(
+                              mapsStoreController
+                                      .rideOptions.value.driver?.photo ??
+                                  'assets/pngs/userVector.png',
+                              fit: BoxFit.contain,
+                            ).image,
+                          ),
+                        )),
                   ],
                 ),
               ],

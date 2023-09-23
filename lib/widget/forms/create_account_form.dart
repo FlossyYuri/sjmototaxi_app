@@ -1,9 +1,10 @@
+import 'package:agotaxi/constants.dart';
 import 'package:agotaxi/enums/RideTypes.dart';
-import 'package:agotaxi/model/Driver.dart';
-import 'package:agotaxi/model/user.dart';
+import 'package:agotaxi/model/DropdownItem.dart';
 import 'package:agotaxi/store/auth_store_controller.dart';
 import 'package:agotaxi/utils/form_validation_api.dart';
 import 'package:agotaxi/widget/common/app_button.dart';
+import 'package:agotaxi/widget/common/form/CustomSelectInput.dart';
 import 'package:agotaxi/widget/common/form/CustomTextInput.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,8 +95,16 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
           if (widget.activeTabIndex == 1)
             Column(
               children: [
-                CustomTextInput(
+                CustomSelectInput(
                   setFieldValue: setFieldValue,
+                  items: VeicleTypes.values
+                      .map(
+                        (e) => DropdownItem(
+                          veiclesFromString[e.toString()],
+                          e.toString(),
+                        ),
+                      )
+                      .toList(),
                   name: 'veicleType',
                   label: 'Tipo de Veículo',
                   placeholder: 'Moto',
@@ -170,6 +179,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               isLoading: authStoreController.isLoading.value,
               onClick: () async {
                 authStoreController.updateLoader(true);
+                print(_formValues.toString());
                 if (!_formKey.currentState!.validate()) {
                   authStoreController.updateLoader(false);
                   return;
@@ -182,7 +192,6 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                 } else {
                   _formValues['role'] = 'DRIVER';
                 }
-                print(_formValues.toString());
                 try {
                   UserCredential user =
                       await _auth.createUserWithEmailAndPassword(

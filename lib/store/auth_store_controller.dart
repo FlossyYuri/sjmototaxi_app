@@ -8,6 +8,10 @@ class AuthStoreController extends GetxController {
   RxMap<String, dynamic> auth = {"user": {}, "token": null}.obs;
   var isLoading = false.obs;
 
+  String userRole() {
+    return auth.value['user']['role'];
+  }
+
   void login(payload) {
     auth = {"user": payload['user'], "token": payload['token']}.obs;
     _persistData();

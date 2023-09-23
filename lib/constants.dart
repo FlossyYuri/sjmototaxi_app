@@ -34,3 +34,9 @@ List<VeicleModel> veicleModels = [
     'Carro',
   ),
 ];
+
+Map<String, dynamic> veiclesFromString = {
+  VeicleTypes.car.toString(): 'Carro',
+  VeicleTypes.bike.toString(): 'Motorizada',
+  VeicleTypes.txopela.toString(): 'Txopela',
+};

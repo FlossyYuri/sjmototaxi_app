@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:agotaxi/store/auth_store_controller.dart';
+import 'package:agotaxi/utils/index.dart';
+import 'package:agotaxi/utils/map.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -11,7 +15,7 @@ import 'package:agotaxi/utils/location.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class DriverGoogleMap extends StatefulWidget {
-  DriverGoogleMap({super.key});
+  const DriverGoogleMap({super.key});
 
   @override
   State<DriverGoogleMap> createState() => _DriverGoogleMapState();
@@ -22,6 +26,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
       Get.find<MapsStoreController>();
   final AuthStoreController authStoreController =
       Get.find<AuthStoreController>();
+  StreamSubscription? _positionStreamSubscription;
 
   GoogleMapController? _controller;
   final List<Marker> _markers = [];
@@ -58,49 +63,81 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
   void _liveLocation() {
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 5,
+      distanceFilter: 20,
     );
+    var stream =
+        Geolocator.getPositionStream(locationSettings: locationSettings);
 
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position position) {
+    _positionStreamSubscription = stream.listen((position) {
       setState(() {
         currentPositionRotation = position.heading;
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
         if (_controller == null) return;
         createDocumentWithPosition();
-        // CustomLocationUtils()
-        //     .updateCameraPosition(_controller!, currentPosition);
+        CustomLocationUtils()
+            .updateCameraPosition(_controller!, currentPosition);
+
+        if (mapsStoreController.rideOptions.value.status == 'accepted') {
+          double meters = getDistanceBetween(
+            position.latitude,
+            position.longitude,
+            mapsStoreController.rideOptions.value.origin!.geometry.latitude,
+            mapsStoreController.rideOptions.value.origin!.geometry.longitude,
+          );
+          if (meters < 300) {
+            mapsStoreController.changeRideStatus('ready');
+          }
+        }
+
+        if (mapsStoreController.rideOptions.value.status == 'running') {
+          double meters = getDistanceBetween(
+            position.latitude,
+            position.longitude,
+            mapsStoreController.rideOptions.value.destin!.geometry.latitude,
+            mapsStoreController.rideOptions.value.destin!.geometry.longitude,
+          );
+          if (meters < 100) {
+            mapsStoreController.changeRideStatus('arrived-destin');
+          }
+          print('Dist: $meters');
+        }
       });
     });
   }
 
-  void _setCurrentPosition() {
-    CustomLocationUtils().getCurrentPosition().then((value) {
-      setState(() {
-        currentPosition = CustomLocationUtils().getLatLngFromPosition(value);
-        if (_controller == null) return;
-        // CustomLocationUtils()
-        //     .updateCameraPosition(_controller!, currentPosition);
-      });
+  Future<void> _setCurrentPosition() async {
+    var value = await CustomLocationUtils().getCurrentPosition();
+    setState(() {
+      currentPosition = CustomLocationUtils().getLatLngFromPosition(value);
+      if (_controller == null) return;
+      CustomLocationUtils().updateCameraPosition(_controller!, currentPosition);
     });
+  }
+
+  void _drawPolilynes() {
+    switch (mapsStoreController.rideOptions.value.status) {
+      case 'accepted':
+        _getPolylineToClient();
+        break;
+      default:
+        if (mapsStoreController.rideOptions.value.origin != null)
+          _getPolyline();
+        break;
+    }
   }
 
   @override
   void initState() {
     _loadMarkerIcons();
-    _setCurrentPosition();
-    // _getPolyline();
-    _liveLocation();
-
     super.initState();
   }
 
-  bool _loading = false;
-
-  _setLoadingMenu(bool _status) {
-    setState(() {
-      _loading = _status;
-    });
+  @override
+  void dispose() {
+    if (_positionStreamSubscription != null) {
+      _positionStreamSubscription!.cancel();
+    }
+    super.dispose();
   }
 
   Map<String, BitmapDescriptor> markerIcon = {};
@@ -115,6 +152,10 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         .getMarkerIconFromPng('assets/pngs/destin2.png');
     markerIcon['car'] =
         await CustomLocationUtils().getMarkerIconFromPng('assets/pngs/car.png');
+
+    await _setCurrentPosition();
+    _liveLocation();
+    _drawPolilynes();
   }
 
   @override
@@ -140,6 +181,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
                       onMapCreated: onMapCreated,
                       polylines: Set<Polyline>.of(polylines.values),
                       markers: {
+                        ...Set<Marker>.of(_markers),
                         Marker(
                           markerId: MarkerId("currentLocation"),
                           icon: markerIcon['current'] ??
@@ -150,7 +192,6 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
                           ),
                           rotation: currentPositionRotation,
                         ),
-                        // ...Set<Marker>.of(_markers)
                       },
                     ),
                   ],
@@ -181,57 +222,67 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         PointLatLng(destin.latitude, destin.longitude),
         travelMode: TravelMode.driving);
     if (result.points.isNotEmpty) {
-      mapsStoreController.rideOptions.value.treatDistance(
-        result.distanceValue,
-        result.distance,
-        result.durationValue,
-        result.duration,
-      );
-      mapsStoreController.rideOptions.refresh();
       polylineCoordinates.clear();
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
 
       if (CustomLocationUtils().isSouthwest(origin, destin)) {
-        _controller!.animateCamera(
-          CameraUpdate.newLatLngBounds(
-              LatLngBounds(
-                southwest: origin,
-                northeast: destin,
-              ),
-              64.0),
-        );
+        moveCamera(_controller!, origin, destin);
       } else {
-        _controller!.animateCamera(
-          CameraUpdate.newLatLngBounds(
-              LatLngBounds(
-                southwest: destin,
-                northeast: origin,
-              ),
-              64.0),
-        );
+        moveCamera(_controller!, destin, origin);
       }
+      _markers.clear();
 
-      setState(() {
-        _markers.add(Marker(
-          markerId: MarkerId("origin"),
-          icon: markerIcon['origin']!,
-          position: LatLng(
-            origin.latitude,
-            origin.longitude,
-          ),
-          anchor: Offset(0.5, 1.0),
-        ));
-        _markers.add(Marker(
-          markerId: MarkerId("destinRed"),
-          icon: markerIcon['destinRed']!,
-          position: LatLng(
-            destin.latitude,
-            destin.longitude,
-          ),
-        ));
+      _markers.add(Marker(
+        markerId: MarkerId("origin"),
+        icon: markerIcon['origin']!,
+        position: LatLng(
+          origin.latitude,
+          origin.longitude,
+        ),
+        anchor: Offset(0.5, 1.0),
+      ));
+      _markers.add(Marker(
+        markerId: MarkerId("destinRed"),
+        icon: markerIcon['destinRed']!,
+        position: LatLng(
+          destin.latitude,
+          destin.longitude,
+        ),
+      ));
+    }
+    _addPolyLine();
+  }
+
+  _getPolylineToClient() async {
+    var origin = currentPosition;
+    var destin = mapsStoreController.rideOptions.value.origin!.geometry;
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        GOOGLE_API_KEY,
+        PointLatLng(origin.latitude, origin.longitude),
+        PointLatLng(destin.latitude, destin.longitude),
+        travelMode: TravelMode.driving);
+    if (result.points.isNotEmpty) {
+      polylineCoordinates.clear();
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
+
+      if (CustomLocationUtils().isSouthwest(origin, destin)) {
+        moveCamera(_controller!, origin, destin);
+      } else {
+        moveCamera(_controller!, destin, origin);
+      }
+      _markers.clear();
+      _markers.add(Marker(
+        markerId: MarkerId("destinRed"),
+        icon: markerIcon['destinRed']!,
+        position: LatLng(
+          destin.latitude,
+          destin.longitude,
+        ),
+      ));
     }
     _addPolyLine();
   }

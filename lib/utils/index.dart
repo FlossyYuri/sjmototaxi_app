@@ -1,6 +1,7 @@
 import 'package:agotaxi/enums/RideTypes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geodesy/geodesy.dart';
 
 class CustomUtils {
   void showCustomDialog(BuildContext context) {
@@ -108,6 +109,18 @@ class CustomUtils {
           );
         });
   }
+}
+
+double getDistanceBetween(
+  double originLat,
+  double originLong,
+  double destinLat,
+  double destinLong,
+) {
+  Distance distanceCalculator = Distance();
+
+  return distanceCalculator.distance(
+      LatLng(originLat, originLong), LatLng(destinLat, destinLong));
 }
 
 VeicleTypes stringToEnum(String input) {

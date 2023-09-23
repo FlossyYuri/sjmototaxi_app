@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:agotaxi/constants.dart';
 import 'package:agotaxi/model/Debouncer.dart';
 import 'package:agotaxi/model/place.dart';
@@ -5,6 +7,7 @@ import 'package:agotaxi/services/auth.dart';
 import 'package:agotaxi/services/maps.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/utils/location.dart';
+import 'package:agotaxi/utils/map.dart';
 import 'package:agotaxi/widget/map/MapSearchField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,30 +26,58 @@ class GoogleMapRender extends StatefulWidget {
 class _GoogleMapRenderState extends State<GoogleMapRender> {
   final MapsStoreController mapsStoreController =
       Get.find<MapsStoreController>();
+  StreamSubscription? _positionStreamSubscription;
+  StreamSubscription? _driversStreamSubscription;
+  StreamSubscription? _currentDriverStreamSubscription;
 
   void driversCarPositionStream() async {
-    await for (var snapshot in FirebaseFirestore.instance
-        .collection('online_drivers')
-        .snapshots()) {
-      _markers.clear();
-      for (var driver in snapshot.docs) {
-        Map<String, dynamic> data = driver.data();
-        print(data['position']['latitude']);
-        var marker = Marker(
-            markerId: MarkerId(data['name']),
-            icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
-            position: LatLng(
-              double.parse(data['position']['latitude']),
-              double.parse(data['position']['longitude']),
-            ),
-            rotation: double.parse(data['rotation'].toString()),
-            anchor: Offset(0.5, 0.5));
+    var stream =
+        FirebaseFirestore.instance.collection('online_drivers').snapshots();
 
+    _driversStreamSubscription = stream.listen((event) {
+      _driversMarkers.clear();
+      for (var driver in event.docs) {
+        Map<String, dynamic> data = driver.data();
+        var marker = Marker(
+          markerId: MarkerId(data['name']),
+          icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
+          position: LatLng(
+            double.parse(data['position']['latitude']),
+            double.parse(data['position']['longitude']),
+          ),
+          rotation: double.parse(data['rotation'].toString()),
+          anchor: Offset(0.5, 0.5),
+        );
         setState(() {
-          _markers.add(marker);
+          _driversMarkers.add(marker);
         });
       }
-    }
+    });
+  }
+
+  void _currentDriversStream() async {
+    var stream = FirebaseFirestore.instance
+        .collection('online_drivers')
+        .doc(mapsStoreController.rideOptions.value.driver!.uid)
+        .snapshots();
+
+    _currentDriverStreamSubscription = stream.listen((event) {
+      Map<String, dynamic> data = event.data()!;
+      var marker = Marker(
+        markerId: MarkerId(data['name']),
+        icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
+        position: LatLng(
+          double.parse(data['position']['latitude']),
+          double.parse(data['position']['longitude']),
+        ),
+        rotation: double.parse(data['rotation'].toString()),
+        anchor: Offset(0.5, 0.5),
+      );
+      _driversMarkers.clear();
+      setState(() {
+        _driversMarkers.add(marker);
+      });
+    });
   }
 
   GoogleMapController? _controller;
@@ -57,7 +88,8 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
     _controller!.setMapStyle(value);
   }
 
-  final List<Marker> _markers = [];
+  final List<Marker> _routeMarkers = [];
+  final List<Marker> _driversMarkers = [];
   Map<String, BitmapDescriptor> markerIcon = {};
   _loadMarkerIcons() async {
     markerIcon['current'] = await CustomLocationUtils()
@@ -70,7 +102,15 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         .getMarkerIconFromPng('assets/pngs/ic_pin.png');
     markerIcon['car'] =
         await CustomLocationUtils().getMarkerIconFromPng('assets/pngs/car.png');
-    driversCarPositionStream();
+    if (mapsStoreController.rideOptions.value.driver != null) {
+      _currentDriversStream();
+    } else if (mapsStoreController.requestStep < 2) {
+      driversCarPositionStream();
+    }
+
+    _setCurrentPosition();
+    _liveLocation();
+    _drawPolilynes();
   }
 
   LatLng currentPosition = const LatLng(-25.8858, 32.6129);
@@ -90,9 +130,10 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
       accuracy: LocationAccuracy.high,
       distanceFilter: 5,
     );
+    var stream =
+        Geolocator.getPositionStream(locationSettings: locationSettings);
 
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position position) {
+    _positionStreamSubscription = stream.listen((Position position) {
       setState(() {
         currentPositionRotation = position.heading;
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
@@ -103,16 +144,60 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
     });
   }
 
-  void _setCurrentPosition() {
-    CustomLocationUtils().getCurrentPosition().then((value) {
-      setState(() {
-        currentPosition = CustomLocationUtils().getLatLngFromPosition(value);
-        origin = CustomLocationUtils().getLatLngFromPosition(value);
-        if (_controller == null) return;
-        CustomLocationUtils()
-            .updateCameraPosition(_controller!, currentPosition);
-      });
+  Future<void> _setCurrentPosition() async {
+    var value = await CustomLocationUtils().getCurrentPosition();
+    setState(() {
+      currentPosition = CustomLocationUtils().getLatLngFromPosition(value);
+      origin = CustomLocationUtils().getLatLngFromPosition(value);
+      if (_controller == null) return;
+      CustomLocationUtils().updateCameraPosition(_controller!, currentPosition);
     });
+  }
+
+  void _drawPolilynes() {
+    switch (mapsStoreController.rideOptions.value.status) {
+      case 'accepted':
+        _getPolylineToDriver();
+        break;
+      default:
+        if (mapsStoreController.rideOptions.value.origin != null) {
+          _getPolyline();
+        }
+        break;
+    }
+  }
+
+  _getPolylineToDriver() async {
+    var origin = currentPosition;
+    var destin = mapsStoreController.rideOptions.value.origin!.geometry;
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        GOOGLE_API_KEY,
+        PointLatLng(origin.latitude, origin.longitude),
+        PointLatLng(destin.latitude, destin.longitude),
+        travelMode: TravelMode.driving);
+    if (result.points.isNotEmpty) {
+      polylineCoordinates.clear();
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+
+      if (CustomLocationUtils().isSouthwest(origin, destin)) {
+        moveCamera(_controller!, origin, destin);
+      } else {
+        moveCamera(_controller!, destin, origin);
+      }
+      _routeMarkers.clear();
+
+      _routeMarkers.add(Marker(
+        markerId: MarkerId("destinYellow"),
+        icon: markerIcon['destinYellow']!,
+        position: LatLng(
+          destin.latitude,
+          destin.longitude,
+        ),
+      ));
+    }
+    _addPolyLine();
   }
 
   void setPlaces() async {
@@ -131,14 +216,24 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
 
   @override
   void initState() {
-    _loadMarkerIcons();
-    _setCurrentPosition();
-    _liveLocation();
     setPlaces();
+    _loadMarkerIcons();
     super.initState();
   }
 
-  bool _loading = false;
+  @override
+  void dispose() {
+    if (_positionStreamSubscription != null) {
+      _positionStreamSubscription!.cancel();
+    }
+    if (_driversStreamSubscription != null) {
+      _driversStreamSubscription!.cancel();
+    }
+    if (_currentDriverStreamSubscription != null) {
+      _currentDriverStreamSubscription!.cancel();
+    }
+    super.dispose();
+  }
 
   void updatePlaceName() {
     _debouncer.run(() {
@@ -150,12 +245,6 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
             GoogleMapsPlace(name, null, destin!);
         mapsStoreController.rideOptions.refresh();
       });
-    });
-  }
-
-  _setLoadingMenu(bool _status) {
-    setState(() {
-      _loading = _status;
     });
   }
 
@@ -222,7 +311,8 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                     destin!.longitude,
                                   ),
                                 ),
-                              ..._markers
+                              ..._routeMarkers,
+                              ..._driversMarkers,
                             },
                           ),
                           if (mapsStoreController.requestStep.value == 1)
@@ -360,10 +450,14 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   _getPolyline() async {
+    var currentOrigin =
+        origin ?? mapsStoreController.rideOptions.value.origin!.geometry;
+    var currentDestin =
+        destin ?? mapsStoreController.rideOptions.value.destin!.geometry;
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         GOOGLE_API_KEY,
-        PointLatLng(origin!.latitude, origin!.longitude),
-        PointLatLng(destin!.latitude, destin!.longitude),
+        PointLatLng(currentOrigin!.latitude, currentOrigin!.longitude),
+        PointLatLng(currentDestin!.latitude, currentDestin!.longitude),
         travelMode: TravelMode.driving);
     if (result.points.isNotEmpty) {
       mapsStoreController.rideOptions.value.treatDistance(
@@ -377,6 +471,31 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
+
+      if (CustomLocationUtils().isSouthwest(currentOrigin, currentDestin)) {
+        moveCamera(_controller!, currentOrigin, currentDestin);
+      } else {
+        moveCamera(_controller!, currentDestin, currentOrigin);
+      }
+
+      _routeMarkers.clear();
+      _routeMarkers.add(Marker(
+        markerId: MarkerId("origin"),
+        icon: markerIcon['origin']!,
+        position: LatLng(
+          currentOrigin.latitude,
+          currentOrigin.longitude,
+        ),
+        anchor: Offset(0.5, 1.0),
+      ));
+      _routeMarkers.add(Marker(
+        markerId: MarkerId("destinYellow"),
+        icon: markerIcon['destinYellow']!,
+        position: LatLng(
+          currentDestin.latitude,
+          currentDestin.longitude,
+        ),
+      ));
     }
     _addPolyLine();
   }

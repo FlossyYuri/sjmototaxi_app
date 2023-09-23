@@ -358,17 +358,30 @@ class WatchRideDriver extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(
-                          () => AppButton(
-                            onClick: () {},
+                    child: Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AppButton(
+                            onClick: () {
+                              if (mapsStoreController
+                                      .rideOptions.value.status ==
+                                  'ready') {
+                                mapsStoreController.changeRideStatus('running');
+                              }
+                              if (mapsStoreController
+                                      .rideOptions.value.status ==
+                                  'arrived-destin') {
+                                Get.toNamed('/cart');
+                                // mapsStoreController.changeRideStatus('closed');
+                                // mapsStoreController.changeRideStatus('running');
+                              }
+                            },
                             label: getButtonText(
                                 mapsStoreController.rideOptions.value.status),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   IconButton(
@@ -483,7 +496,7 @@ class WatchRideDriver extends StatelessWidget {
       case 'ready':
         return 'Iniciar Corrida';
       case 'running':
-        return 'Em progresso';
+        return 'Leve o passageiro ao destino';
       case 'canceled':
         return 'Cancelado';
       case 'arrived-destin':

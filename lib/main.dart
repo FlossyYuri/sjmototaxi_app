@@ -1,13 +1,11 @@
 import 'package:agotaxi/firebase_options.dart';
 import 'package:agotaxi/screens/Auth/login_screen.dart';
-import 'package:agotaxi/screens/Client/checkout/cart_screen.dart';
+import 'package:agotaxi/screens/Client/cart_screen.dart';
 import 'package:agotaxi/screens/Client/checkout/delivery_screen.dart';
-import 'package:agotaxi/screens/Client/checkout/rate_screen.dart';
+import 'package:agotaxi/screens/Client/rate_screen.dart';
 import 'package:agotaxi/screens/Client/checkout/rates_screen.dart';
-import 'package:agotaxi/screens/Client/vendor_screen.dart';
 import 'package:agotaxi/screens/Common/chat_screen.dart';
 import 'package:agotaxi/screens/OnBoarding/onboarding_screen.dart';
-import 'package:agotaxi/screens/Vendor/register.dart';
 import 'package:agotaxi/screens/client_ride_screen.dart';
 import 'package:agotaxi/screens/driver_screen.dart';
 import 'package:agotaxi/screens/home_page.dart';
@@ -77,13 +75,11 @@ class AgoTaxiApp extends StatelessWidget {
                       : const ClientRideScreen());
             }),
         '/chat': (context) => const ChatScreen(),
+        '/home2': (context) => const MyHomePage(),
         '/cart': (context) => const CartScreen(),
-        '/vendor': (context) => const VendorScreen(),
         '/delivery': (context) => const DeliveryScreen(),
         '/rate': (context) => const RateScreen(),
         '/rates': (context) => const RatesScreen(),
-        '/vendor/register': (context) => const RegisterVendor(),
-        '/vendor/product': (context) => const RegisterVendor(),
         '/extra': (context) => const MyHomePage(),
       },
     );

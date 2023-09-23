@@ -13,57 +13,66 @@ class _PaymentMethodsState extends State<PaymentMethods> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Métodos de pagamento'.toString(),
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          const SizedBox(height: 8),
-          CustomRadioButton(
-            value: 'transfer',
-            label: 'Transferência Bancária',
-            icon: 'assets/icons/transfer.svg',
-            groupValue: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value;
-              });
-            },
-          ),
-          const SizedBox(height: 8),
-          CustomRadioButton(
-            value: 'mpesa',
-            label: 'Mpesa',
-            icon: 'assets/icons/mpesa.svg',
-            groupValue: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value;
-              });
-            },
-          ),
-          const SizedBox(height: 8),
-          CustomRadioButton(
-            value: 'paypal',
-            label: 'Paypal',
-            icon: 'assets/icons/paypal.svg',
-            groupValue: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value;
-              });
-            },
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Métodos de pagamento',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Text(
+          'Selecione o método de pagamentoque o cliente usou.',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 8),
+        CustomRadioButton(
+          value: 'cash',
+          label: 'Dinheiro',
+          icon: 'assets/icons/paypal.svg',
+          groupValue: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value;
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+        CustomRadioButton(
+          value: 'mpesa',
+          label: 'Mpesa',
+          icon: 'assets/icons/mpesa.svg',
+          groupValue: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value;
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+        CustomRadioButton(
+          value: 'emola',
+          label: 'Emola',
+          icon: 'assets/icons/transfer.svg',
+          groupValue: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value;
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+        CustomRadioButton(
+          value: 'other',
+          label: 'Outro',
+          icon: 'assets/icons/paypal.svg',
+          groupValue: selectedValue,
+          onChanged: (value) {
+            setState(() {
+              selectedValue = value;
+            });
+          },
+        ),
+      ],
     );
   }
 }

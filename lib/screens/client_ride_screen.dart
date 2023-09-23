@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:agotaxi/model/RideOptions.dart';
 import 'package:agotaxi/store/auth_store_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +27,7 @@ class _ClientRideScreenState extends State<ClientRideScreen>
       Get.find<MapsStoreController>();
   final AuthStoreController authStoreController =
       Get.find<AuthStoreController>();
+  StreamSubscription? _currentRideSubscription;
   // void setGyroscopeListener() {
   //   gyroscopeEvents.listen(
   //     (GyroscopeEvent event) {
@@ -43,15 +47,37 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     }
   }
 
+  void currentRideStream() async {
+    var currentRidesStream = FirebaseFirestore.instance
+        .collection('rides')
+        .doc(mapsStoreController.rideOptions.value.id)
+        .snapshots();
+
+    _currentRideSubscription = currentRidesStream.listen((document) {
+      print('Inside ${mapsStoreController.rideOptions.value.id}');
+      var ride = RideOptions.fromMap(document.data()!);
+      mapsStoreController.setRide(ride);
+    });
+  }
+
+  void startSingleRideStream() {
+    if (_currentRideSubscription != null) {
+      _currentRideSubscription!.cancel();
+    }
+    currentRideStream();
+  }
+
   @override
   void initState() {
-    // setGyroscopeListener();
-
+    if (mapsStoreController.rideOptions.value.id != null) {
+      currentRideStream();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Bugging __________");
     return WillPopScope(
       onWillPop: () async {
         mapsStoreController.previousStep();
@@ -91,7 +117,9 @@ class _ClientRideScreenState extends State<ClientRideScreen>
                               scrollController: scrollController);
                         case 3:
                           return RequestRide(
-                              scrollController: scrollController);
+                            scrollController: scrollController,
+                            subcribeToRide: startSingleRideStream,
+                          );
                         default:
                           return WatchRide(scrollController: scrollController);
                       }
@@ -131,7 +159,7 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     if (step == 1) return 0;
     if (step == 2) return 0.4;
     if (step == 3) return 0.3333;
-    if (step == 4) return 0.4;
+    if (step == 4) return 0.55;
     return 0;
   }
 
@@ -140,7 +168,7 @@ class _ClientRideScreenState extends State<ClientRideScreen>
     if (step == 1) return 0;
     if (step == 2) return 0.4;
     if (step == 3) return 0.3333;
-    if (step == 4) return 0.4;
+    if (step == 4) return 0.55;
     return 0.3334;
   }
 }

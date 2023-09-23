@@ -1,34 +1,20 @@
 import 'dart:async';
 
+import 'package:agotaxi/enums/RideTypes.dart';
+import 'package:agotaxi/model/RideOptions.dart';
+import 'package:agotaxi/model/place.dart';
 import 'package:agotaxi/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:agotaxi/enums/RideTypes.dart';
-import 'package:agotaxi/model/RideOptions.dart';
-import 'package:agotaxi/model/place.dart';
 
 class MapsStoreController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   RxList<GoogleMapsPlace> googlePopularPlaces = <GoogleMapsPlace>[].obs;
   final box = GetStorage();
-  late StreamSubscription _currentRideSubscription;
   RxList<String> rejectedRides = RxList<String>();
   var requestStep = 0.obs;
-  var rideOptions = RideOptions(
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    'opened',
-  ).obs;
+  var rideOptions = RideOptions.emptyRide().obs;
 
   void setRide(RideOptions ride) {
     rideOptions.value = ride;
@@ -60,6 +46,46 @@ class MapsStoreController extends GetxController {
     if (requestStep.value > 0) requestStep.value--;
   }
 
+  void changeRideStatus(String status) {
+    _firestore
+        .collection('rides')
+        .doc(rideOptions.value.id)
+        .update({'status': status});
+  }
+
+  void rateUser(String comment, int stars, UserModel user) {
+    _firestore.collection('rates').add({
+      'userId': user.uid,
+      'userName': user.name,
+      'userPhoto': user.photo,
+      'stars': stars,
+      'comment': comment,
+      'date': FieldValue.serverTimestamp(),
+      'rideID': rideOptions.value.id,
+      'ratedBy': rideOptions.value.id,
+    });
+  }
+
+  void closeTicket() {
+    _firestore.collection('rides').doc(rideOptions.value.id).update({
+      'status': 'closed',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    box.write('ratingMissing', true);
+    print('closed');
+  }
+
+  void cleanRide() {
+    box.remove('rideID');
+    rejectedRides.value.clear();
+    requestStep.value = 0;
+    rideOptions.value = RideOptions.emptyRide();
+    requestStep.refresh();
+    rideOptions.refresh();
+    rejectedRides.refresh();
+    box.remove('ratingMissing');
+  }
+
   void handleRejectedRides(String rideID) {
     rejectedRides.value.add(rideID);
     rejectedRides.refresh();
@@ -68,6 +94,7 @@ class MapsStoreController extends GetxController {
 
   Future<void> initRide() async {
     var rideID = box.read('rideID');
+    print('was i first ${rideID}');
     if (rideID != null) {
       var rideDcoument = await _firestore.collection('rides').doc(rideID).get();
       var rideMap = rideDcoument.data();
@@ -76,8 +103,16 @@ class MapsStoreController extends GetxController {
         if (currentRide.status != 'closed') {
           rideOptions.value = currentRide;
           rideOptions.refresh();
+          requestStep.value = 4;
+          requestStep.refresh();
           print('was i first');
           return;
+        } else {
+          if (box.read('ratingMissing')) {
+            rideOptions.value = currentRide;
+            rideOptions.refresh();
+            Get.toNamed('/rate');
+          }
         }
       }
 

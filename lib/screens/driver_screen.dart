@@ -148,13 +148,14 @@ class _DriverScreenState extends State<DriverScreen>
                 child: DriverGoogleMap(),
               ),
               Obx(() {
-                if (mapsStoreController.rideOptions.value.client == null)
-                  return Positioned(
+                if (mapsStoreController.rideOptions.value.client == null) {
+                  return const Positioned(
                     bottom: 24,
                     right: 24,
                     left: 24,
                     child: LoadingBar(),
                   );
+                }
                 return Positioned(
                   bottom: 24,
                   right: 24,
@@ -168,12 +169,12 @@ class _DriverScreenState extends State<DriverScreen>
                 top: 30,
                 right: 20,
                 child: TextButton(
-                  style: ButtonStyle(
+                  style: const ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll<Color>(Colors.red),
                   ),
                   onPressed: authStoreController.logout,
-                  child: Text(
+                  child: const Text(
                     'Logout',
                     style: TextStyle(color: Colors.white),
                   ),

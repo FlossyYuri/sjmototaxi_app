@@ -37,6 +37,21 @@ class RideOptions {
     this.status,
   );
 
+  factory RideOptions.emptyRide() {
+    return RideOptions(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      'opened',
+    );
+  }
   RideOptions.fromMap(Map<String, dynamic> ride) {
     id = ride['id'];
     origin = GoogleMapsPlace.fromMap(ride['origin']);

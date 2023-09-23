@@ -1,8 +1,6 @@
 import 'package:agotaxi/screens/Common/chat_screen.dart';
 import 'package:agotaxi/screens/Common/history_screen.dart';
 import 'package:agotaxi/screens/Common/wallet_screen.dart';
-import 'package:agotaxi/screens/vendor/product.dart';
-import 'package:agotaxi/screens/vendor/register.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -15,29 +13,6 @@ class MyHomePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            const Text('data'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterVendor(),
-                  ),
-                );
-              },
-              child: Text('Register Vendor'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterProduct(),
-                  ),
-                );
-              },
-              child: Text('Register Produto'),
-            ),
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -68,6 +43,24 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: Text('Carteira'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/cart');
+              },
+              child: Text('Cart'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/delivery');
+              },
+              child: Text('Entrega'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/rate');
+              },
+              child: Text('Avaliar'),
             ),
             Divider(),
             ElevatedButton(onPressed: () {}, child: Text('Splash 1')),
