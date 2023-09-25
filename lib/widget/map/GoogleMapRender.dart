@@ -7,7 +7,6 @@ import 'package:agotaxi/services/auth.dart';
 import 'package:agotaxi/services/maps.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/utils/location.dart';
-import 'package:agotaxi/utils/map.dart';
 import 'package:agotaxi/widget/map/MapSearchField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +74,17 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
       );
       _driversMarkers.clear();
       setState(() {
+        driverPosition = LatLng(
+          double.parse(data['position']['latitude']),
+          double.parse(data['position']['longitude']),
+        );
+        CustomLocationUtils()
+            .updateCameraPosition(_controller!, driverPosition!);
+        if (polylineCoordinates.isEmpty &&
+            (['accepted', 'ready']
+                .contains(mapsStoreController.rideOptions.value.status))) {
+          _getPolylineToDriver();
+        }
         _driversMarkers.add(marker);
       });
     });
@@ -114,6 +124,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   LatLng currentPosition = const LatLng(-25.8858, 32.6129);
+  LatLng? driverPosition;
   LatLng? origin;
   LatLng? destin;
 
@@ -157,7 +168,10 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   void _drawPolilynes() {
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
-        _getPolylineToDriver();
+      case 'ready':
+        if (driverPosition != null) {
+          _getPolylineToDriver();
+        }
         break;
       default:
         if (mapsStoreController.rideOptions.value.origin != null) {
@@ -168,7 +182,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   _getPolylineToDriver() async {
-    var origin = currentPosition;
+    var origin = driverPosition!;
     var destin = mapsStoreController.rideOptions.value.origin!.geometry;
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         GOOGLE_API_KEY,
@@ -181,21 +195,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
 
-      if (CustomLocationUtils().isSouthwest(origin, destin)) {
-        moveCamera(_controller!, origin, destin);
-      } else {
-        moveCamera(_controller!, destin, origin);
-      }
       _routeMarkers.clear();
-
-      _routeMarkers.add(Marker(
-        markerId: MarkerId("destinYellow"),
-        icon: markerIcon['destinYellow']!,
-        position: LatLng(
-          destin.latitude,
-          destin.longitude,
-        ),
-      ));
     }
     _addPolyLine();
   }
@@ -471,12 +471,6 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
-
-      if (CustomLocationUtils().isSouthwest(currentOrigin, currentDestin)) {
-        moveCamera(_controller!, currentOrigin, currentDestin);
-      } else {
-        moveCamera(_controller!, currentDestin, currentOrigin);
-      }
 
       _routeMarkers.clear();
       _routeMarkers.add(Marker(

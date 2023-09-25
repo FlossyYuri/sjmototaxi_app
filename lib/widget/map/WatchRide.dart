@@ -392,7 +392,7 @@ class WatchRide extends StatelessWidget {
       case 'opened':
         return 'Buscando ...';
       case 'ready':
-        return 'Pronto';
+        return 'Va até o motorista';
       case 'accepted':
         return 'Aguarde pelo motorista';
       case 'running':
