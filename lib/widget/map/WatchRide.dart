@@ -31,10 +31,15 @@ class WatchRide extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                leading: Icon(Icons.delete, color: Colors.red.shade500),
+                title: Text(
+                  'Cancelar Corrida',
+                  style: TextStyle(color: Colors.red.shade500),
+                ),
                 onTap: () {
                   // Handle Delete action
+                  mapsStoreController.changeRideStatus('canceled');
+                  mapsStoreController.cleanRide();
                   Navigator.pop(context);
                 },
               ),
