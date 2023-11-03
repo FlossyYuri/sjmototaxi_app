@@ -13,12 +13,18 @@ class MapsStoreController extends GetxController {
   RxList<GoogleMapsPlace> googlePopularPlaces = <GoogleMapsPlace>[].obs;
   final box = GetStorage();
   RxList<String> rejectedRides = RxList<String>();
+  var rideLastStatus = 'opened'.obs;
   var requestStep = 0.obs;
   var rideOptions = RideOptions.emptyRide().obs;
 
   void setRide(RideOptions ride) {
     rideOptions.value = ride;
     rideOptions.refresh();
+  }
+
+  void updateRideStatus(String status) {
+    rideLastStatus.value = status;
+    rideLastStatus.refresh();
   }
 
   void saveCurrentRide(String documentId) {
@@ -106,6 +112,7 @@ class MapsStoreController extends GetxController {
           requestStep.value = 4;
           requestStep.refresh();
           print('was i first');
+          print('--->' + rideOptions.value.type.toString());
           return;
         } else {
           if (box.read('ratingMissing')) {
@@ -115,7 +122,6 @@ class MapsStoreController extends GetxController {
           }
         }
       }
-
       box.remove('rideID');
       // auth = (storedData as Map<String, dynamic>).obs;
     }

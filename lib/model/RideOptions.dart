@@ -56,7 +56,7 @@ class RideOptions {
     id = ride['id'];
     origin = GoogleMapsPlace.fromMap(ride['origin']);
     destin = GoogleMapsPlace.fromMap(ride['destin']);
-    type = stringToEnum(ride['type']);
+    type = stringToVeicleEnum(ride['type']);
     price = ride['price'];
     discount = ride['discount'];
     distance = ride['distance'];

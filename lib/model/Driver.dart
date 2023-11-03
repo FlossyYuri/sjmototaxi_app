@@ -14,7 +14,7 @@ class Driver extends UserModel {
   Driver.fromMap(Map<String, dynamic> user) : super.fromMap(user) {
     brand = user['brand'];
     plate = user['plate'];
-    veicleType = stringToEnum(user['veicleType']);
+    veicleType = stringToVeicleEnum(user['veicleType']);
   }
 
   Map<String, dynamic> toMap() {

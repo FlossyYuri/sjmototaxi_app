@@ -147,6 +147,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
     _positionStreamSubscription = stream.listen((Position position) {
       setState(() {
         currentPositionRotation = position.heading;
+        print('Current loc----------------');
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
         if (_controller == null) return;
         CustomLocationUtils()
@@ -166,6 +167,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   void _drawPolilynes() {
+    print('runned X_______________X');
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
       case 'ready':
@@ -252,15 +254,22 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Obx(
-        () => SizedBox(
+      return Obx(() {
+        if (mapsStoreController.rideLastStatus !=
+            mapsStoreController.rideOptions.value.status) {
+          _drawPolilynes();
+          mapsStoreController
+              .updateRideStatus(mapsStoreController.rideOptions.value.status);
+        }
+
+        return SizedBox(
           height: constraints.maxHeight / getLayoutSizeByStep(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                 child: currentPosition == null
-                    ? Center(child: Text("Loading"))
+                    ? const Center(child: Text("Loading"))
                     : Stack(
                         children: [
                           GoogleMap(
@@ -292,7 +301,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                 : null,
                             markers: {
                               Marker(
-                                markerId: MarkerId("currentLocation"),
+                                markerId: const MarkerId("currentLocation"),
                                 icon: markerIcon['current'] ??
                                     BitmapDescriptor.defaultMarker,
                                 position: LatLng(
@@ -303,7 +312,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                               ),
                               if (destin != null)
                                 Marker(
-                                  markerId: MarkerId("selectedLocation"),
+                                  markerId: const MarkerId("selectedLocation"),
                                   icon: markerIcon['selected'] ??
                                       BitmapDescriptor.defaultMarker,
                                   position: LatLng(
@@ -325,12 +334,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 20,
-                                      offset: Offset(0, 0),
+                                      offset: const Offset(0, 0),
                                       color: Colors.white.withAlpha(200),
                                     ),
                                   ],
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 24, vertical: 12),
                                 child: Text(
                                   "Mova o mapa para trocar a localização",
@@ -352,12 +361,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                     boxShadow: [
                                       BoxShadow(
                                         blurRadius: 20,
-                                        offset: Offset(0, -5),
+                                        offset: const Offset(0, -5),
                                         color: Colors.black.withAlpha(25),
                                       ),
                                     ],
                                   ),
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   child: Column(
                                     crossAxisAlignment:
@@ -371,7 +380,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                             .titleMedium!
                                             .apply(color: Colors.grey.shade600),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         placeName,
                                         textAlign: TextAlign.left,
@@ -415,9 +424,9 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                           },
                           child: Container(
                             color: Theme.of(context).primaryColor,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 24),
-                            child: Text(
+                            child: const Text(
                               'Aplicar',
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -433,13 +442,13 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                   : Container()
             ],
           ),
-        ),
-      );
+        );
+      });
     });
   }
 
   _addPolyLine() {
-    PolylineId id = PolylineId("poly");
+    PolylineId id = const PolylineId("poly");
     Polyline polyline = Polyline(
         polylineId: id,
         color: Theme.of(context).primaryColor,
@@ -474,16 +483,16 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
 
       _routeMarkers.clear();
       _routeMarkers.add(Marker(
-        markerId: MarkerId("origin"),
+        markerId: const MarkerId("origin"),
         icon: markerIcon['origin']!,
         position: LatLng(
           currentOrigin.latitude,
           currentOrigin.longitude,
         ),
-        anchor: Offset(0.5, 1.0),
+        anchor: const Offset(0.5, 1.0),
       ));
       _routeMarkers.add(Marker(
-        markerId: MarkerId("destinYellow"),
+        markerId: const MarkerId("destinYellow"),
         icon: markerIcon['destinYellow']!,
         position: LatLng(
           currentDestin.latitude,

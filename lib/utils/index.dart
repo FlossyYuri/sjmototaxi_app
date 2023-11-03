@@ -130,6 +130,13 @@ VeicleTypes stringToEnum(String input) {
   );
 }
 
+VeicleTypes stringToVeicleEnum(String input) {
+  return VeicleTypes.values.firstWhere(
+    (e) => e.toString() == input,
+    orElse: () => VeicleTypes.car,
+  );
+}
+
 List<String> listDynamicToListString(List<dynamic> list) {
   return list.map((e) => e as String).toList();
 }

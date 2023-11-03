@@ -248,8 +248,10 @@ class WatchRide extends StatelessWidget {
             const SizedBox(height: 16),
             Obx(
               () {
+                print(mapsStoreController.rideOptions.value.type.toString());
                 var veicle = veicleModels.firstWhere((element) =>
-                    element.type == mapsStoreController.rideOptions.value.type);
+                    element.type.toString() ==
+                    mapsStoreController.rideOptions.value.type.toString());
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(

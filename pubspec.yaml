@@ -62,8 +62,9 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: 'assets/logo.png'
-# flutter_native_splash:
-#   background_image: 'assets/splash.png'
-#   android: true
-#   ios: true
-#   android_gravity: center
+flutter_native_splash:
+  background_image: 'assets/splash.jpg'
+  android: true
+  ios: true
+  android_gravity: fill
+  
