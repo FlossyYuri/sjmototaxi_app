@@ -158,11 +158,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   void _drawPolilynes() {
-    print('runned X_______________X');
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
       case 'ready':
-        _getPolylineToDriver();
+        if (driverPosition != null) {
+          _getPolylineToDriver();
+        }
         break;
       case 'opened':
       case 'running':
