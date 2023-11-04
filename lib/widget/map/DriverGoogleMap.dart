@@ -96,6 +96,7 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
             mapsStoreController.rideOptions.value.destin!.geometry.latitude,
             mapsStoreController.rideOptions.value.destin!.geometry.longitude,
           );
+          print(meters.toString() + "--------------");
           if (meters < 100) {
             mapsStoreController.changeRideStatus('arrived-destin');
           }
@@ -120,7 +121,6 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
         _getPolylineToClient();
         break;
       case 'running':
-      case 'opened':
         _getPolyline();
         break;
       default:
@@ -156,7 +156,9 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
 
     await _setCurrentPosition();
     _liveLocation();
-    _drawPolilynes();
+    if (mapsStoreController.rideOptions.value.status != 'opened') {
+      _drawPolilynes();
+    }
   }
 
   @override
@@ -170,8 +172,10 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
               : Stack(
                   children: [
                     Obx(() {
-                      if (mapsStoreController.lastRideStatus.value !=
-                          mapsStoreController.rideOptions.value?.status) {
+                      if ((mapsStoreController.lastRideStatus.value !=
+                              mapsStoreController.rideOptions.value?.status) &&
+                          mapsStoreController.rideOptions.value.status !=
+                              'opened') {
                         mapsStoreController.updateLastRideStatus(
                             mapsStoreController.rideOptions.value.status);
                         _drawPolilynes();
