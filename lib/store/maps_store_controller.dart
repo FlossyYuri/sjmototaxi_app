@@ -115,7 +115,8 @@ class MapsStoreController extends GetxController {
           print('was i first');
           return;
         } else {
-          if (box.read('ratingMissing')) {
+          if (box.hasData('ratingMissing') &&
+              box.read('ratingMissing') != null) {
             rideOptions.value = currentRide;
             rideOptions.refresh();
             Get.toNamed('/rate');
