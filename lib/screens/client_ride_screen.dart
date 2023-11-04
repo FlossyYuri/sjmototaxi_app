@@ -130,11 +130,11 @@ class _ClientRideScreenState extends State<ClientRideScreen>
                 top: 100,
                 right: 20,
                 child: TextButton(
-                  style: ButtonStyle(
+                  style: const ButtonStyle(
                       backgroundColor:
                           MaterialStatePropertyAll<Color>(Colors.red)),
                   onPressed: authStoreController.logout,
-                  child: Text(
+                  child: const Text(
                     'Logout',
                     style: TextStyle(color: Colors.white),
                   ),

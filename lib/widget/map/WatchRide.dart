@@ -31,10 +31,15 @@ class WatchRide extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                leading: Icon(Icons.delete, color: Colors.red.shade500),
+                title: Text(
+                  'Cancelar Corrida',
+                  style: TextStyle(color: Colors.red.shade500),
+                ),
                 onTap: () {
                   // Handle Delete action
+                  mapsStoreController.changeRideStatus('canceled');
+                  mapsStoreController.cleanRide();
                   Navigator.pop(context);
                 },
               ),
@@ -243,8 +248,10 @@ class WatchRide extends StatelessWidget {
             const SizedBox(height: 16),
             Obx(
               () {
+                print(mapsStoreController.rideOptions.value.type.toString());
                 var veicle = veicleModels.firstWhere((element) =>
-                    element.type == mapsStoreController.rideOptions.value.type);
+                    element.type.toString() ==
+                    mapsStoreController.rideOptions.value.type.toString());
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
@@ -392,7 +399,7 @@ class WatchRide extends StatelessWidget {
       case 'opened':
         return 'Buscando ...';
       case 'ready':
-        return 'Pronto';
+        return 'Va até o motorista';
       case 'accepted':
         return 'Aguarde pelo motorista';
       case 'running':

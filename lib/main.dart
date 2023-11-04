@@ -44,7 +44,7 @@ class AgoTaxiApp extends StatelessWidget {
       title: 'Ago Taxi',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: HexColor("#0C00E3"),
+        primaryColor: HexColor("#FEA611"),
         secondaryHeaderColor: HexColor("#50555C"),
         canvasColor: HexColor("#F2F2F2"),
         dividerTheme: DividerThemeData(

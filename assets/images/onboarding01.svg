@@ -241,7 +241,7 @@
   <g mask="url(#mask8_1952_5387)">
     <path fill-rule="evenodd" clip-rule="evenodd"
       d="M123.216 194.256H96.0133C91.865 194.256 88.5024 190.893 88.5024 186.746V114.069C88.5024 109.921 91.865 106.559 96.0133 106.559H123.216C127.365 106.559 130.727 109.921 130.727 114.069V186.746C130.727 190.893 127.365 194.256 123.216 194.256Z"
-      fill="#0C00E3" />
+      fill="#FEA611" />
   </g>
   <mask id="mask9_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -263,7 +263,7 @@
   <g mask="url(#mask10_1952_5387)">
     <path
       d="M105.052 128.956C106.236 127.818 107.843 127.117 109.614 127.117C111.387 127.117 112.994 127.818 114.178 128.956"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask11_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -274,7 +274,7 @@
   <g mask="url(#mask11_1952_5387)">
     <path
       d="M114.67 137.93C113.462 139.374 111.646 140.294 109.615 140.294C107.584 140.294 105.767 139.374 104.559 137.93"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask12_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -285,7 +285,7 @@
   <g mask="url(#mask12_1952_5387)">
     <path
       d="M103.167 132.348C103.074 132.786 103.025 133.241 103.025 133.706C103.025 135.315 103.602 136.787 104.558 137.931"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask13_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -296,7 +296,7 @@
   <g mask="url(#mask13_1952_5387)">
     <path
       d="M114.67 137.931C115.627 136.787 116.204 135.315 116.204 133.706C116.204 133.241 116.154 132.786 116.063 132.348"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask14_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -305,7 +305,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask14_1952_5387)">
-    <path d="M105.051 128.957C104.115 129.857 103.444 131.03 103.167 132.348" stroke="#0C00E3"
+    <path d="M105.051 128.957C104.115 129.857 103.444 131.03 103.167 132.348" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask15_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -315,7 +315,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask15_1952_5387)">
-    <path d="M114.178 128.957C115.115 129.857 115.786 131.03 116.063 132.348" stroke="#0C00E3"
+    <path d="M114.178 128.957C115.115 129.857 115.786 131.03 116.063 132.348" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask16_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -327,7 +327,7 @@
   <g mask="url(#mask16_1952_5387)">
     <path
       d="M109.765 135.249C109.715 135.249 109.665 135.246 109.615 135.246C109.564 135.246 109.514 135.249 109.464 135.249"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask17_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -336,7 +336,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask17_1952_5387)">
-    <path d="M114.67 137.929C113.718 136.365 111.884 135.295 109.765 135.246" stroke="#0C00E3"
+    <path d="M114.67 137.929C113.718 136.365 111.884 135.295 109.765 135.246" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask18_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -346,7 +346,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask18_1952_5387)">
-    <path d="M109.464 135.246C107.346 135.295 105.511 136.365 104.559 137.929" stroke="#0C00E3"
+    <path d="M109.464 135.246C107.346 135.295 105.511 136.365 104.559 137.929" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask19_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -356,7 +356,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask19_1952_5387)">
-    <path d="M109.765 135.248C112.871 135.21 115.446 133.979 116.063 132.348" stroke="#0C00E3"
+    <path d="M109.765 135.248C112.871 135.21 115.446 133.979 116.063 132.348" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask20_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -368,7 +368,7 @@
   <g mask="url(#mask20_1952_5387)">
     <path
       d="M109.765 135.246C109.715 135.246 109.665 135.248 109.615 135.248C109.564 135.248 109.514 135.246 109.464 135.246"
-      stroke="#0C00E3" stroke-width="1.718" />
+      stroke="#FEA611" stroke-width="1.718" />
   </g>
   <mask id="mask21_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"
     width="278" height="278">
@@ -377,7 +377,7 @@
       fill="white" />
   </mask>
   <g mask="url(#mask21_1952_5387)">
-    <path d="M109.464 135.248C106.359 135.21 103.784 133.979 103.167 132.348" stroke="#0C00E3"
+    <path d="M109.464 135.248C106.359 135.21 103.784 133.979 103.167 132.348" stroke="#FEA611"
       stroke-width="1.718" />
   </g>
   <mask id="mask22_1952_5387" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0"

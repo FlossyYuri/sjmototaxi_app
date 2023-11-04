@@ -13,6 +13,7 @@ class MapsStoreController extends GetxController {
   RxList<GoogleMapsPlace> googlePopularPlaces = <GoogleMapsPlace>[].obs;
   final box = GetStorage();
   RxList<String> rejectedRides = RxList<String>();
+  var rideLastStatus = 'opened'.obs;
   var requestStep = 0.obs;
   var lastRideStatus = '-'.obs;
   var rideOptions = RideOptions.emptyRide().obs;
@@ -121,7 +122,6 @@ class MapsStoreController extends GetxController {
           }
         }
       }
-
       box.remove('rideID');
       // auth = (storedData as Map<String, dynamic>).obs;
     }

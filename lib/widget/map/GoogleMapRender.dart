@@ -7,7 +7,6 @@ import 'package:agotaxi/services/auth.dart';
 import 'package:agotaxi/services/maps.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/utils/location.dart';
-import 'package:agotaxi/utils/map.dart';
 import 'package:agotaxi/widget/map/MapSearchField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapRender extends StatefulWidget {
-  GoogleMapRender({super.key});
+  const GoogleMapRender({super.key});
 
   @override
   State<GoogleMapRender> createState() => _GoogleMapRenderState();
@@ -46,7 +45,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
             double.parse(data['position']['longitude']),
           ),
           rotation: double.parse(data['rotation'].toString()),
-          anchor: Offset(0.5, 0.5),
+          anchor: const Offset(0.5, 0.5),
         );
         setState(() {
           _driversMarkers.add(marker);
@@ -72,7 +71,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
             double.parse(data['position']['longitude']),
           ),
           rotation: double.parse(data['rotation'].toString()),
-          anchor: Offset(0.5, 0.5),
+          anchor: const Offset(0.5, 0.5),
         );
         _driversMarkers.clear();
         setState(() {
@@ -116,6 +115,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   LatLng currentPosition = const LatLng(-25.8858, 32.6129);
+  LatLng? driverPosition;
   LatLng? origin;
   LatLng? destin;
 
@@ -138,6 +138,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
     _positionStreamSubscription = stream.listen((Position position) {
       setState(() {
         currentPositionRotation = position.heading;
+        print('Current loc----------------');
         currentPosition = CustomLocationUtils().getLatLngFromPosition(position);
         if (_controller == null) return;
         CustomLocationUtils()
@@ -157,6 +158,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   void _drawPolilynes() {
+    print('runned X_______________X');
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
       case 'ready':
@@ -173,7 +175,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   _getPolylineToDriver() async {
-    var origin = currentPosition;
+    var origin = driverPosition!;
     var destin = mapsStoreController.rideOptions.value.origin!.geometry;
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         GOOGLE_API_KEY,
@@ -186,21 +188,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
 
-      if (CustomLocationUtils().isSouthwest(origin, destin)) {
-        moveCamera(_controller!, origin, destin);
-      } else {
-        moveCamera(_controller!, destin, origin);
-      }
       _routeMarkers.clear();
-
-      _routeMarkers.add(Marker(
-        markerId: MarkerId("destinYellow"),
-        icon: markerIcon['destinYellow']!,
-        position: LatLng(
-          destin.latitude,
-          destin.longitude,
-        ),
-      ));
     }
     _addPolyLine();
   }
@@ -271,7 +259,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
             children: [
               Expanded(
                 child: currentPosition == null
-                    ? Center(child: Text("Loading"))
+                    ? const Center(child: Text("Loading"))
                     : Stack(
                         children: [
                           GoogleMap(
@@ -287,11 +275,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                             onMapCreated: onMapCreated,
                             polylines: Set<Polyline>.of(polylines.values),
                             onCameraMove: (position) {
-                              if (mapsStoreController.requestStep.value == 1)
+                              if (mapsStoreController.requestStep.value == 1) {
                                 setState(() {
                                   destin = position.target;
                                   updatePlaceName();
                                 });
+                              }
                             },
                             onTap: mapsStoreController.requestStep.value == 1
                                 ? (position) {
@@ -303,7 +292,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                 : null,
                             markers: {
                               Marker(
-                                markerId: MarkerId("currentLocation"),
+                                markerId: const MarkerId("currentLocation"),
                                 icon: markerIcon['current'] ??
                                     BitmapDescriptor.defaultMarker,
                                 position: LatLng(
@@ -314,7 +303,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                               ),
                               if (destin != null)
                                 Marker(
-                                  markerId: MarkerId("selectedLocation"),
+                                  markerId: const MarkerId("selectedLocation"),
                                   icon: markerIcon['selected'] ??
                                       BitmapDescriptor.defaultMarker,
                                   position: LatLng(
@@ -336,12 +325,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 20,
-                                      offset: Offset(0, 0),
+                                      offset: const Offset(0, 0),
                                       color: Colors.white.withAlpha(200),
                                     ),
                                   ],
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 24, vertical: 12),
                                 child: Text(
                                   "Mova o mapa para trocar a localização",
@@ -363,12 +352,12 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                     boxShadow: [
                                       BoxShadow(
                                         blurRadius: 20,
-                                        offset: Offset(0, -5),
+                                        offset: const Offset(0, -5),
                                         color: Colors.black.withAlpha(25),
                                       ),
                                     ],
                                   ),
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   child: Column(
                                     crossAxisAlignment:
@@ -382,7 +371,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                                             .titleMedium!
                                             .apply(color: Colors.grey.shade600),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         placeName,
                                         textAlign: TextAlign.left,
@@ -426,9 +415,9 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                           },
                           child: Container(
                             color: Theme.of(context).primaryColor,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 24),
-                            child: Text(
+                            child: const Text(
                               'Aplicar',
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -450,7 +439,7 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   }
 
   _addPolyLine() {
-    PolylineId id = PolylineId("poly");
+    PolylineId id = const PolylineId("poly");
     Polyline polyline = Polyline(
         polylineId: id,
         color: Theme.of(context).primaryColor,
@@ -483,24 +472,18 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
 
-      if (CustomLocationUtils().isSouthwest(currentOrigin, currentDestin)) {
-        moveCamera(_controller!, currentOrigin, currentDestin);
-      } else {
-        moveCamera(_controller!, currentDestin, currentOrigin);
-      }
-
       _routeMarkers.clear();
       _routeMarkers.add(Marker(
-        markerId: MarkerId("origin"),
+        markerId: const MarkerId("origin"),
         icon: markerIcon['origin']!,
         position: LatLng(
           currentOrigin.latitude,
           currentOrigin.longitude,
         ),
-        anchor: Offset(0.5, 1.0),
+        anchor: const Offset(0.5, 1.0),
       ));
       _routeMarkers.add(Marker(
-        markerId: MarkerId("destinYellow"),
+        markerId: const MarkerId("destinYellow"),
         icon: markerIcon['destinYellow']!,
         position: LatLng(
           currentDestin.latitude,
