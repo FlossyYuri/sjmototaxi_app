@@ -85,7 +85,10 @@ class MapsStoreController extends GetxController {
       'createdAt': FieldValue.serverTimestamp(),
     });
     box.write('ratingMissing', true);
-    print('closed');
+  }
+
+  void closeTicketForClient() {
+    box.write('ratingMissing', true);
   }
 
   void cleanRide() {

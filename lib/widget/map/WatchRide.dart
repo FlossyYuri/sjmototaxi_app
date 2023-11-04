@@ -363,8 +363,16 @@ class WatchRide extends StatelessWidget {
                             ),
                           ),
                         const SizedBox(width: 16),
-                        Obx(
-                          () => Text(
+                        Obx(() {
+                          if (mapsStoreController.lastRideStatus.value !=
+                                  mapsStoreController
+                                      .rideOptions.value?.status &&
+                              (mapsStoreController.lastRideStatus.value ==
+                                  'closed')) {
+                            mapsStoreController.closeTicketForClient();
+                            Get.toNamed('/rate');
+                          }
+                          return Text(
                             getStatus(
                                 mapsStoreController.rideOptions.value.status),
                             style: TextStyle(
@@ -372,8 +380,8 @@ class WatchRide extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
-                          ),
-                        )
+                          );
+                        })
                       ],
                     ),
                   ),
@@ -406,6 +414,8 @@ class WatchRide extends StatelessWidget {
         return 'Em progresso';
       case 'canceled':
         return 'Cancelado';
+      case 'arrived-destin':
+        return 'Faça o pagamento ao Motorista';
       case 'closed':
         return 'Finalizado';
       default:

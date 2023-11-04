@@ -26,30 +26,32 @@ class PopularLocations extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ...mapsStoreController.googlePopularPlaces.value
-                .take(6)
-                .map(
-                  (e) => Column(
-                    children: [
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/icons/ic_pin.svg'),
-                          const SizedBox(width: 12),
-                          Text(
-                            e.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(fontSize: 18),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Divider(thickness: 0.3)
-                    ],
-                  ),
-                )
-                .toList()
+            Obx(() => Column(
+                  children: mapsStoreController.googlePopularPlaces.value
+                      .take(6)
+                      .map(
+                        (e) => Column(
+                          children: [
+                            Row(
+                              children: [
+                                SvgPicture.asset('assets/icons/ic_pin.svg'),
+                                const SizedBox(width: 12),
+                                Text(
+                                  e.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Divider(thickness: 0.3)
+                          ],
+                        ),
+                      )
+                      .toList(),
+                ))
           ],
         ));
   }
