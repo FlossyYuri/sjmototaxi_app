@@ -62,21 +62,23 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
         .snapshots();
 
     _currentDriverStreamSubscription = stream.listen((event) {
-      Map<String, dynamic> data = event.data()!;
-      var marker = Marker(
-        markerId: MarkerId(data['name']),
-        icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
-        position: LatLng(
-          double.parse(data['position']['latitude']),
-          double.parse(data['position']['longitude']),
-        ),
-        rotation: double.parse(data['rotation'].toString()),
-        anchor: Offset(0.5, 0.5),
-      );
-      _driversMarkers.clear();
-      setState(() {
-        _driversMarkers.add(marker);
-      });
+      if (event.data() != null) {
+        Map<String, dynamic> data = event.data()!;
+        var marker = Marker(
+          markerId: MarkerId(data['name']),
+          icon: markerIcon['car'] ?? BitmapDescriptor.defaultMarker,
+          position: LatLng(
+            double.parse(data['position']['latitude']),
+            double.parse(data['position']['longitude']),
+          ),
+          rotation: double.parse(data['rotation'].toString()),
+          anchor: Offset(0.5, 0.5),
+        );
+        _driversMarkers.clear();
+        setState(() {
+          _driversMarkers.add(marker);
+        });
+      }
     });
   }
 
@@ -157,13 +159,16 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   void _drawPolilynes() {
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
+      case 'ready':
         _getPolylineToDriver();
         break;
-      default:
+      case 'opened':
+      case 'running':
         if (mapsStoreController.rideOptions.value.origin != null) {
           _getPolyline();
         }
         break;
+      default:
     }
   }
 
@@ -252,8 +257,14 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Obx(
-        () => SizedBox(
+      return Obx(() {
+        if (mapsStoreController.lastRideStatus.value !=
+            mapsStoreController.rideOptions.value?.status) {
+          mapsStoreController.updateLastRideStatus(
+              mapsStoreController.rideOptions.value.status);
+          _drawPolilynes();
+        }
+        return SizedBox(
           height: constraints.maxHeight / getLayoutSizeByStep(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -433,8 +444,8 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
                   : Container()
             ],
           ),
-        ),
-      );
+        );
+      });
     });
   }
 

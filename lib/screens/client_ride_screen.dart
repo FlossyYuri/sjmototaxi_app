@@ -77,7 +77,6 @@ class _ClientRideScreenState extends State<ClientRideScreen>
 
   @override
   Widget build(BuildContext context) {
-    print("Bugging __________");
     return WillPopScope(
       onWillPop: () async {
         mapsStoreController.previousStep();

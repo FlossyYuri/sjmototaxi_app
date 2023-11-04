@@ -67,7 +67,7 @@ class AgoTaxiApp extends StatelessWidget {
             future: mapsStoreController.initRide(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               return Obx(() =>
                   authStoreController.auth['user']['role'] == 'DRIVER'

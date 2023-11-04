@@ -14,11 +14,17 @@ class MapsStoreController extends GetxController {
   final box = GetStorage();
   RxList<String> rejectedRides = RxList<String>();
   var requestStep = 0.obs;
+  var lastRideStatus = '-'.obs;
   var rideOptions = RideOptions.emptyRide().obs;
 
   void setRide(RideOptions ride) {
     rideOptions.value = ride;
     rideOptions.refresh();
+  }
+
+  void updateLastRideStatus(String status) {
+    lastRideStatus.value = status;
+    lastRideStatus.refresh();
   }
 
   void saveCurrentRide(String documentId) {
