@@ -17,6 +17,13 @@ class MapsStoreController extends GetxController {
   var lastRideStatus = 'opened'.obs;
   var rideOptions = RideOptions.emptyRide().obs;
 
+  void resetMaps() {
+    requestStep = 0.obs;
+    lastRideStatus = 'opened'.obs;
+    rideOptions = RideOptions.emptyRide().obs;
+    googlePopularPlaces = <GoogleMapsPlace>[].obs;
+  }
+
   void setRide(RideOptions ride) {
     rideOptions.value = ride;
     rideOptions.refresh();

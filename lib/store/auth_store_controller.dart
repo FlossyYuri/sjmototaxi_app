@@ -1,3 +1,4 @@
+import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -5,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 class AuthStoreController extends GetxController {
   final box = GetStorage();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   RxMap<String, dynamic> auth = {"user": {}, "token": null}.obs;
   var isLoading = false.obs;
 
@@ -17,11 +19,14 @@ class AuthStoreController extends GetxController {
     _persistData();
   }
 
-  void logout() {
+  void logout() async {
+    final MapsStoreController mapsStoreController =
+        Get.find<MapsStoreController>();
     auth = {"user": {}, "token": null}.obs;
-    box.erase();
+    mapsStoreController.resetMaps();
+    await box.erase();
+    await _auth.signOut();
     Get.offAllNamed('/auth/login');
-    _auth.signOut();
   }
 
   void updateLoader(bool payload) {
