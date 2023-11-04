@@ -30,8 +30,7 @@ class AuthStoreController extends GetxController {
   }
 
   void updateLoader(bool payload) {
-    print(payload.toString());
-    isLoading = payload.obs;
+    isLoading.value = payload;
     isLoading.refresh();
   }
 
