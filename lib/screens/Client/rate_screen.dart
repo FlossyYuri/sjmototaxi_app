@@ -48,146 +48,150 @@ class _RateScreenState extends State<RateScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 68),
-                          Obx(
-                            () => Text(
-                              mapsStoreController
-                                      .rideOptions.value.driver?.name ??
-                                  'Motorista',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Obx(
-                            () => Text(
-                              '${mapsStoreController.rideOptions.value.driver?.brand ?? "-"} - ${mapsStoreController.rideOptions.value.driver?.plate ?? "-"}',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "O que achou do \nproduto desta loja?",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Seu feedback irá ajudar a melhorar \nos serviços e produtos na aplicação.",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [1, 2, 3, 4, 5].map((e) {
-                              int index = e - 1;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedRating = e;
-                                  });
-                                },
-                                child: SvgPicture.asset(
-                                  index < selectedRating
-                                      ? 'assets/icons/star2.svg'
-                                      : 'assets/icons/star1.svg',
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 48),
-                          TextField(
-                            maxLines: 4, // Allows multiple lines
-                            keyboardType: TextInputType.multiline,
-                            style: TextStyle(color: Colors.grey.shade400),
-                            controller: _textController,
-                            decoration: InputDecoration(
-                              hintText: 'Comentário',
-                              hintStyle: Theme.of(context).textTheme.bodySmall,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 68),
+                            Obx(
+                              () => Text(
+                                mapsStoreController
+                                        .rideOptions.value.driver?.name ??
+                                    'Motorista',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
+                            const SizedBox(height: 8),
+                            Obx(
+                              () => Text(
+                                '${mapsStoreController.rideOptions.value.driver?.brand ?? "-"} - ${mapsStoreController.rideOptions.value.driver?.plate ?? "-"}',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "O que achou \ndeste motorista?",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Seu feedback irá ajudar a melhorar \nos serviços na aplicação.",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [1, 2, 3, 4, 5].map((e) {
+                                int index = e - 1;
+                                return GestureDetector(
                                   onTap: () {
-                                    if (selectedRating == 0) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content:
-                                              Text('Avaliação é obrigatória.'),
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                    switch (authStoreController.userRole()) {
-                                      case 'DRIVER':
-                                        mapsStoreController.rateUser(
-                                            _textController.text,
-                                            selectedRating,
-                                            mapsStoreController
-                                                .rideOptions.value.client!);
-                                        break;
-                                      default:
-                                        mapsStoreController.rateUser(
-                                            _textController.text,
-                                            selectedRating,
-                                            mapsStoreController
-                                                .rideOptions.value.driver!);
-                                    }
-
-                                    mapsStoreController.cleanRide();
-                                    Navigator.pushNamed(context, '/home');
+                                    setState(() {
+                                      selectedRating = e;
+                                    });
                                   },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 24, vertical: 12),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(
-                                        8,
+                                  child: SvgPicture.asset(
+                                    index < selectedRating
+                                        ? 'assets/icons/star2.svg'
+                                        : 'assets/icons/star1.svg',
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 48),
+                            TextField(
+                              maxLines: 4, // Allows multiple lines
+                              keyboardType: TextInputType.multiline,
+                              style: TextStyle(color: Colors.grey.shade400),
+                              controller: _textController,
+                              decoration: InputDecoration(
+                                hintText: 'Comentário',
+                                hintStyle:
+                                    Theme.of(context).textTheme.bodySmall,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (selectedRating == 0) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Avaliação é obrigatória.'),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      switch (authStoreController.userRole()) {
+                                        case 'DRIVER':
+                                          mapsStoreController.rateUser(
+                                              _textController.text,
+                                              selectedRating,
+                                              mapsStoreController
+                                                  .rideOptions.value.client!);
+                                          break;
+                                        default:
+                                          mapsStoreController.rateUser(
+                                              _textController.text,
+                                              selectedRating,
+                                              mapsStoreController
+                                                  .rideOptions.value.driver!);
+                                      }
+
+                                      mapsStoreController.cleanRide();
+                                      Navigator.pushNamed(context, '/home');
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.circular(
+                                          8,
+                                        ),
                                       ),
-                                    ),
-                                    child: const Text(
-                                      "Enviar avaliação",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
+                                      child: const Text(
+                                        "Enviar avaliação",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
                       ),
                     ),
                     Positioned(
-                        top: -50,
-                        left: 0,
-                        right: 0,
-                        child: Obx(
-                          () => CircleAvatar(
-                            radius: 50,
-                            backgroundImage: Image.asset(
-                              mapsStoreController
-                                      .rideOptions.value.driver?.photo ??
-                                  'assets/pngs/userVector.png',
-                              fit: BoxFit.contain,
-                            ).image,
-                          ),
-                        )),
+                      top: -50,
+                      left: 0,
+                      right: 0,
+                      child: Obx(
+                        () => CircleAvatar(
+                          radius: 50,
+                          backgroundImage: Image.asset(
+                            mapsStoreController
+                                    .rideOptions.value.driver?.photo ??
+                                'assets/pngs/userVector.png',
+                            fit: BoxFit.contain,
+                          ).image,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],

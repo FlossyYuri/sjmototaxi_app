@@ -165,7 +165,6 @@ class _GoogleMapRenderState extends State<GoogleMapRender> {
           _getPolylineToDriver();
         }
         break;
-      case 'opened':
       case 'running':
         if (mapsStoreController.rideOptions.value.origin != null) {
           _getPolyline();

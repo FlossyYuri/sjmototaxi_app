@@ -13,9 +13,8 @@ class MapsStoreController extends GetxController {
   RxList<GoogleMapsPlace> googlePopularPlaces = <GoogleMapsPlace>[].obs;
   final box = GetStorage();
   RxList<String> rejectedRides = RxList<String>();
-  var rideLastStatus = 'opened'.obs;
   var requestStep = 0.obs;
-  var lastRideStatus = '-'.obs;
+  var lastRideStatus = 'opened'.obs;
   var rideOptions = RideOptions.emptyRide().obs;
 
   void setRide(RideOptions ride) {
@@ -102,6 +101,8 @@ class MapsStoreController extends GetxController {
   Future<void> initRide() async {
     var rideID = box.read('rideID');
     print('was i first ${rideID}');
+    print('was i first ${rideOptions.value.toString()}');
+    print('was i first ${requestStep.value.toString()}');
     if (rideID != null) {
       var rideDcoument = await _firestore.collection('rides').doc(rideID).get();
       var rideMap = rideDcoument.data();
