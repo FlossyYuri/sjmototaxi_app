@@ -116,12 +116,14 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
   void _drawPolilynes() {
     switch (mapsStoreController.rideOptions.value.status) {
       case 'accepted':
+      case 'ready':
         _getPolylineToClient();
         break;
-      default:
-        if (mapsStoreController.rideOptions.value.origin != null)
-          _getPolyline();
+      case 'running':
+      case 'opened':
+        _getPolyline();
         break;
+      default:
     }
   }
 
@@ -167,32 +169,40 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
               ? Center(child: Text("Loading"))
               : Stack(
                   children: [
-                    GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(
-                          currentPosition.latitude,
-                          currentPosition.longitude,
-                        ),
-                        zoom: 15.0,
-                        tilt: 0,
-                        bearing: 0,
-                      ),
-                      onMapCreated: onMapCreated,
-                      polylines: Set<Polyline>.of(polylines.values),
-                      markers: {
-                        ...Set<Marker>.of(_markers),
-                        Marker(
-                          markerId: MarkerId("currentLocation"),
-                          icon: markerIcon['current'] ??
-                              BitmapDescriptor.defaultMarker,
-                          position: LatLng(
+                    Obx(() {
+                      if (mapsStoreController.lastRideStatus.value !=
+                          mapsStoreController.rideOptions.value?.status) {
+                        mapsStoreController.updateLastRideStatus(
+                            mapsStoreController.rideOptions.value.status);
+                        _drawPolilynes();
+                      }
+                      return GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(
                             currentPosition.latitude,
                             currentPosition.longitude,
                           ),
-                          rotation: currentPositionRotation,
+                          zoom: 15.0,
+                          tilt: 0,
+                          bearing: 0,
                         ),
-                      },
-                    ),
+                        onMapCreated: onMapCreated,
+                        polylines: Set<Polyline>.of(polylines.values),
+                        markers: {
+                          ...Set<Marker>.of(_markers),
+                          Marker(
+                            markerId: MarkerId("currentLocation"),
+                            icon: markerIcon['current'] ??
+                                BitmapDescriptor.defaultMarker,
+                            position: LatLng(
+                              currentPosition.latitude,
+                              currentPosition.longitude,
+                            ),
+                            rotation: currentPositionRotation,
+                          ),
+                        },
+                      );
+                    })
                   ],
                 ),
         ),
