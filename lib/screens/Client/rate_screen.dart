@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:agotaxi/store/auth_store_controller.dart';
 import 'package:agotaxi/store/maps_store_controller.dart';
 import 'package:agotaxi/widget/layout/SimpleAppBar.dart';
@@ -22,56 +24,61 @@ class _RateScreenState extends State<RateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDriver = authStoreController.userRole() == 'DRIVER';
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
-          appBar: const SimpleAppBar(
-            title: 'Avaliar Motorista',
+          appBar: SimpleAppBar(
+            title: 'Avaliar ${renderSubject(isDriver)}',
             isDark: false,
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(
-                  height: 48,
-                ),
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(
+                    height: 48,
+                  ),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const SizedBox(height: 68),
                             Obx(
                               () => Text(
-                                mapsStoreController
-                                        .rideOptions.value.driver?.name ??
-                                    'Motorista',
+                                (isDriver
+                                        ? mapsStoreController
+                                            .rideOptions.value.driver?.name
+                                        : mapsStoreController
+                                            .rideOptions.value.client?.name) ??
+                                    renderSubject(isDriver),
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Obx(
-                              () => Text(
-                                '${mapsStoreController.rideOptions.value.driver?.brand ?? "-"} - ${mapsStoreController.rideOptions.value.driver?.plate ?? "-"}',
-                                textAlign: TextAlign.center,
+                            if (isDriver)
+                              Obx(
+                                () => Text(
+                                  '${mapsStoreController.rideOptions.value.driver?.brand ?? ""} - ${mapsStoreController.rideOptions.value.driver?.plate ?? "-"}',
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
                             const SizedBox(height: 8),
                             Text(
-                              "O que achou \ndeste motorista?",
+                              "O que achou \ndeste ${renderSubject(authStoreController.userRole() == "DRIVER")}?",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
@@ -106,12 +113,20 @@ class _RateScreenState extends State<RateScreen> {
                               keyboardType: TextInputType.multiline,
                               style: TextStyle(color: Colors.grey.shade400),
                               controller: _textController,
+                              cursorColor: Theme.of(context).primaryColor,
                               decoration: InputDecoration(
                                 hintText: 'Comentário',
                                 hintStyle:
                                     Theme.of(context).textTheme.bodySmall,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor),
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor),
                                 ),
                               ),
                             ),
@@ -127,6 +142,7 @@ class _RateScreenState extends State<RateScreen> {
                                           const SnackBar(
                                             content: Text(
                                                 'Avaliação é obrigatória.'),
+                                            backgroundColor: Colors.red,
                                           ),
                                         );
                                         return;
@@ -175,30 +191,41 @@ class _RateScreenState extends State<RateScreen> {
                           ],
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: -50,
-                      left: 0,
-                      right: 0,
-                      child: Obx(
-                        () => CircleAvatar(
-                          radius: 50,
-                          backgroundImage: Image.asset(
-                            mapsStoreController
-                                    .rideOptions.value.driver?.photo ??
-                                'assets/pngs/userVector.png',
-                            fit: BoxFit.contain,
-                          ).image,
+                      Positioned(
+                        top: -50,
+                        left: 0,
+                        right: 0,
+                        child: Obx(
+                          () => CircleAvatar(
+                            radius: 52,
+                            backgroundColor: Color(0xffFEBB1B),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: Image.asset(
+                                mapsStoreController
+                                        .rideOptions.value.driver?.photo ??
+                                    'assets/pngs/userVector.png',
+                                fit: BoxFit.contain,
+                              ).image,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  String renderSubject(bool isDriver) {
+    if (isDriver) {
+      return 'Motorista';
+    }
+    return 'Cliente';
   }
 }
