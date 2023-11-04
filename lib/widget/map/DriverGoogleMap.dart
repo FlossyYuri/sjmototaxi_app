@@ -99,7 +99,6 @@ class _DriverGoogleMapState extends State<DriverGoogleMap> {
           if (meters < 100) {
             mapsStoreController.changeRideStatus('arrived-destin');
           }
-          print('Dist: $meters');
         }
       });
     });

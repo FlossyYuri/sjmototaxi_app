@@ -1,3 +1,4 @@
+import 'package:agotaxi/model/RideOptions.dart';
 import 'package:agotaxi/store/auth_store_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,23 +28,23 @@ class WatchRideDriver extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(24),
         ),
         boxShadow: [
           BoxShadow(
             blurRadius: 20,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
             color: Colors.black.withAlpha(50),
           ),
         ],
       ),
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 24,
               vertical: 12,
             ),
@@ -70,7 +71,7 @@ class WatchRideDriver extends StatelessWidget {
                         ).image,
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                         child: Obx(
                       () => Column(
@@ -78,7 +79,7 @@ class WatchRideDriver extends StatelessWidget {
                         children: [
                           Text(
                             mapsStoreController.rideOptions.value.client!.name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 18,
                               color: Colors.black,
@@ -90,7 +91,7 @@ class WatchRideDriver extends StatelessWidget {
                                 'assets/icons/star.svg',
                                 height: 18,
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
                                 "...",
                                 style: TextStyle(
@@ -119,7 +120,7 @@ class WatchRideDriver extends StatelessWidget {
                         height: 24,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     FloatingActionButton.small(
                       //<-- SEE HERE
                       heroTag: 'callButton',
@@ -134,7 +135,7 @@ class WatchRideDriver extends StatelessWidget {
                         'assets/icons/contact.svg',
                         width: 24,
                         height: 24,
-                        colorFilter: ColorFilter.mode(
+                        colorFilter: const ColorFilter.mode(
                           Colors.white,
                           BlendMode.srcIn,
                         ),
@@ -147,7 +148,7 @@ class WatchRideDriver extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               children: [
                 Column(
@@ -174,7 +175,7 @@ class WatchRideDriver extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Obx(
                   () => Expanded(
                     child: Column(
@@ -188,12 +189,12 @@ class WatchRideDriver extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Divider(
                           color: Colors.grey.shade300,
                           height: 20,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           mapsStoreController.rideOptions.value.destin!.name,
                           textAlign: TextAlign.start,
@@ -222,12 +223,12 @@ class WatchRideDriver extends StatelessWidget {
                       children: [
                         SvgPicture.asset(
                           veicle.icon,
-                          colorFilter: ColorFilter.mode(
+                          colorFilter: const ColorFilter.mode(
                             Colors.black,
                             BlendMode.srcIn,
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Column(
                           children: [
                             Text(
@@ -243,7 +244,7 @@ class WatchRideDriver extends StatelessWidget {
                               mapsStoreController
                                       .rideOptions.value.formatedDistance ??
                                   '...',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -266,7 +267,7 @@ class WatchRideDriver extends StatelessWidget {
                               mapsStoreController
                                       .rideOptions.value.formatedDuration ??
                                   '...',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -287,7 +288,7 @@ class WatchRideDriver extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               '${mapsStoreController.rideOptions.value.price ?? "..."} MT',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -308,7 +309,7 @@ class WatchRideDriver extends StatelessWidget {
           if (['accepted', 'running']
               .contains(mapsStoreController.rideOptions.value.status))
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
               child: Row(
                 children: [
                   Expanded(
@@ -354,7 +355,7 @@ class WatchRideDriver extends StatelessWidget {
           if (['ready', 'arrived-destin']
               .contains(mapsStoreController.rideOptions.value.status))
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
               child: Row(
                 children: [
                   Expanded(
@@ -403,8 +404,6 @@ class WatchRideDriver extends StatelessWidget {
                   Flexible(
                     child: AppButton(
                       onClick: () async {
-                        print(mapsStoreController.rideOptions.value.id);
-                        print(authStoreController.auth['user']['uid']);
                         var document = await _firestore
                             .collection('rides')
                             .doc(mapsStoreController.rideOptions.value.id)
@@ -412,6 +411,7 @@ class WatchRideDriver extends StatelessWidget {
                           'rejectedDrivers': FieldValue.arrayUnion(
                               [authStoreController.auth['user']['uid']])
                         });
+                        mapsStoreController.setRide(RideOptions.emptyRide());
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Corrida rejeitada!'),
@@ -457,8 +457,8 @@ class WatchRideDriver extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
                 onTap: () {
                   // Handle Edit action
                   Navigator.pop(context);
